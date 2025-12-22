@@ -56,6 +56,28 @@ def index():
     conn = get_db_connection()
     cursor = conn.cursor()
     
+    # Check if we have products, if not, populate some
+    cursor.execute("SELECT COUNT(*) FROM products")
+    if cursor.fetchone()[0] == 0:
+        # Add sample products
+        sample_products = [
+            ('Summer Beige Dress', 45.99, '/static/beige.jpg'),
+            ('Black Evening Dress', 89.99, '/static/black.jpg'),
+            ('Blue Party Dress', 65.99, '/static/blueparty.jpg'),
+            ('Floral Summer Dress', 39.99, '/static/floral.jpg'),
+            ('Pink Maxi Dress', 55.99, '/static/pinkmaxi.jpg'),
+            ('White Casual Dress', 42.99, '/static/whitecasual.jpg')
+        ]
+        cursor.executemany('INSERT INTO products (name, price, image_url) VALUES (?, ?, ?)', sample_products)
+        
+        # Add sample ads
+        sample_ads = [
+            ('New Collection', 'Latest styles available!', '/static/latest.jpg'),
+            ('Style Analytics', 'Find your perfect style', '/static/styleanalytics.jpg')
+        ]
+        cursor.executemany('INSERT INTO ads (title, content, image_url) VALUES (?, ?, ?)', sample_ads)
+        conn.commit()
+    
     # Fetch active ads
     cursor.execute("SELECT * FROM ads WHERE is_active = 1")
     ads = cursor.fetchall()
@@ -167,6 +189,18 @@ def service():
 @app.route('/cart')
 def cart():
     return render_template('cart.html')
+
+@app.route('/test-images')
+def test_images():
+    """Test route to see if images are accessible"""
+    import os
+    static_path = os.path.join(app.root_path, 'static')
+    if os.path.exists(static_path):
+        files = os.listdir(static_path)
+        image_files = [f for f in files if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif'))]
+        return f"Static folder exists. Image files found: {image_files}"
+    else:
+        return "Static folder not found"
 
 @app.route('/populate')
 def populate_sample_data():
