@@ -157,6 +157,10 @@ def contact():
 def service():
     return render_template('service.html')
 
+@app.route('/cart')
+def cart():
+    return render_template('cart.html')
+
 # Initialize database when app starts
 init_db()
 
