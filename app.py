@@ -54,13 +54,49 @@ def init_db():
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )''')
     
+    # Add sample products if none exist
+    cursor.execute("SELECT COUNT(*) FROM products")
+    if cursor.fetchone()[0] == 0:
+        sample_products = [
+            ('Summer Beige Dress', 'Elegant beige midi dress perfect for summer occasions', 45.99, 'casual', '/static/beige.jpg', 10),
+            ('Black Evening Dress', 'Sophisticated black dress for evening events', 89.99, 'formal', '/static/black.jpg', 8),
+            ('Blue Party Dress', 'Vibrant blue dress perfect for parties', 65.99, 'party', '/static/blueparty.jpg', 12),
+            ('Floral Summer Dress', 'Beautiful floral pattern for spring/summer', 39.99, 'casual', '/static/floral.jpg', 15),
+            ('Pink Maxi Dress', 'Flowing pink maxi dress for casual wear', 55.99, 'casual', '/static/pinkmaxi.jpg', 9),
+            ('White Casual Dress', 'Clean white dress for everyday wear', 42.99, 'casual', '/static/whitecasual.jpg', 14)
+        ]
+        cursor.executemany('INSERT INTO products (name, description, price, category, image_url, stock_quantity) VALUES (?, ?, ?, ?, ?, ?)', sample_products)
+    
+    # Add sample ads if none exist
+    cursor.execute("SELECT COUNT(*) FROM ads")
+    if cursor.fetchone()[0] == 0:
+        sample_ads = [
+            ('New Summer Collection', 'Discover our latest summer styles!', '/static/latest.jpg', 'all', 1),
+            ('Style Analytics', 'Find your perfect style with our recommendations', '/static/styleanalytics.jpg', 'all', 1)
+        ]
+        cursor.executemany('INSERT INTO ads (title, content, image_url, target_audience, is_active) VALUES (?, ?, ?, ?, ?)', sample_ads)
+    
     conn.commit()
     cursor.close()
     conn.close()
 
 @app.route('/')
 def index():
-    return render_template('index.html', ads=[], products=[])
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Fetch active ads
+    cursor.execute("SELECT * FROM ads WHERE is_active = 1")
+    ads = cursor.fetchall()
+    
+    # Fetch products
+    cursor.execute("SELECT * FROM products LIMIT 12")
+    products = cursor.fetchall()
+    
+    cursor.close()
+    conn.close()
+    
+    return render_template('index.html', ads=ads, products=products)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
