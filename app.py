@@ -106,7 +106,7 @@ def init_db():
         min_purchase DECIMAL(10,2),
         valid_from DATETIME,
         valid_until DATETIME,
-        is_active BOOLEAN DEFAULT TRUE,
+        is_active INTEGER DEFAULT 1,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )''')
     
@@ -115,7 +115,7 @@ def init_db():
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT NOT NULL,
         offer_id INT NOT NULL,
-        is_used BOOLEAN DEFAULT FALSE,
+        is_used INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES dressly_users(id),
         FOREIGN KEY (offer_id) REFERENCES offers(id)
@@ -146,7 +146,7 @@ def init_db():
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        is_ordered BOOLEAN DEFAULT FALSE,
+        is_ordered INTEGER DEFAULT 0,
         FOREIGN KEY (user_id) REFERENCES dressly_users(id)
     )''')
 
@@ -170,14 +170,16 @@ def init_db():
 
 init_db()
 
-# Function to check and add column if it doesn't exist
+# Function to check and add column if it doesn't exist (SQLite version)
 def add_column_if_not_exists(cursor, table, column, definition):
     try:
-        cursor.execute(f"SHOW COLUMNS FROM {table} LIKE %s", (column,))
-        if not cursor.fetchone():
+        # SQLite way to check if column exists
+        cursor.execute(f"PRAGMA table_info({table})")
+        columns = [row[1] for row in cursor.fetchall()]
+        if column not in columns:
             cursor.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
             return True
-    except mysql.connector.Error as err:
+    except sqlite3.Error as err:
         print(f"Error checking/adding column {column} to {table}: {err}")
     return False
 
@@ -215,7 +217,7 @@ def init_ads_table():
         target_segment INT,
         start_date DATE,
         end_date DATE,
-        is_active BOOLEAN DEFAULT TRUE
+        is_active INTEGER DEFAULT 1
     )''')
     conn.commit()
     cursor.close()
@@ -225,7 +227,7 @@ def init_ads_table():
 init_db()
 init_ads_table()
 # Ensure all required columns exist
-ensure_columns()
+# ensure_columns()  # Commented out for SQLite compatibility
 
 @app.route('/')
 def index():
@@ -285,7 +287,7 @@ def register():
             conn.close()
             flash('Registration successful! Please log in.', 'success')
             return redirect(url_for('login'))
-        except mysql.connector.IntegrityError:
+        except sqlite3.IntegrityError:
             cursor.close()
             conn.close()
             flash('Username or email already exists.', 'error')
