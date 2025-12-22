@@ -1,0 +1,679 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard | Dressly{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+<script src="{{ url_for('static', filename='js/dashboard.js') }}" defer></script>
+<style>
+  :root {
+    --chocolate-cosmos: #412220;
+    --wine: #69212D;
+    --cordovan: #8C2F39;
+    --redwood: #B23A48;
+    --light-coral: #D77A7D;
+    --dashboard-bg: linear-gradient(135deg, #69212D 0%, #D77A7D 100%);
+    --section-bg: #fff8f7;
+    --section-card: #fbeaec;
+    --section-border: #b23a48;
+    --accent: #b23a48;
+    --accent2: #8c2f39;
+    --accent3: #d77a7d;
+    --text-dark: #412220;
+    --text-light: #fff;
+    --shadow: 0 4px 24px rgba(178,58,72,0.10);
+  }
+  body, .dashboard-bg {
+    background: var(--dashboard-bg);
+    min-height: 100vh;
+    color: var(--text-dark);
+  }
+  .dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+  }
+  .sidebar {
+    width: 230px;
+    background: #fff;
+    border-right: 2px solid var(--accent3);
+    box-shadow: 2px 0 12px rgba(178,58,72,0.07);
+    padding: 2.2rem 1rem 2.2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 2;
+  }
+  .sidebar h2 {
+    color: var(--accent2);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .sidebar-nav button {
+    background: none;
+    border: none;
+    color: var(--accent2);
+    font-size: 1.02rem;
+    font-weight: 600;
+    text-align: left;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    transition: background 0.18s, color 0.18s;
+    cursor: pointer;
+  }
+  .sidebar-nav button.active, .sidebar-nav button:hover {
+    background: var(--accent3);
+    color: #fff;
+  }
+  .main-content {
+    flex: 1;
+    padding: 2.2rem 2rem;
+    background: rgba(255,255,255,0.95);
+    border-radius: 0 32px 32px 0;
+    box-shadow: var(--shadow);
+    margin: 2.2rem 2.2rem 2.2rem 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2.2rem;
+  }
+  .dashboard-section { display: none; }
+  .dashboard-section.active { display: block; }
+  /* Small image styles */
+  .recently-viewed-card img, .recommend-card img {
+    width: 60px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 0.3rem;
+    border: 1.5px solid var(--accent2);
+  }
+  .recently-viewed-card, .recommend-card {
+    min-width: 90px;
+    max-width: 90px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(178,58,72,0.10);
+    border: 1.5px solid var(--accent3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 0.3rem;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .recently-viewed-carousel, .recommend-grid {
+    display: flex;
+    gap: 0.7rem;
+    overflow-x: auto;
+    padding-bottom: 0.3rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent3) #fff8f7;
+  }
+  /* Feedback form styles */
+  .feedback-form {
+    background: var(--section-card);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 1.5rem 1.2rem;
+    border-left: 6px solid var(--section-border);
+    max-width: 420px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .feedback-form label {
+    font-weight: 600;
+    color: var(--accent2);
+  }
+  .feedback-form textarea {
+    border-radius: 7px;
+    border: 1.5px solid var(--accent3);
+    padding: 0.7rem 1rem;
+    font-size: 1rem;
+    background: #fff8f7;
+    color: var(--cordovan);
+    min-height: 80px;
+    resize: vertical;
+  }
+  .feedback-form button {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 0.7rem 1.5rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+    transition: background 0.2s;
+  }
+  .feedback-form button:hover {
+    background: var(--accent2);
+  }
+  .recent-feedback-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    margin-top: 1.2rem;
+  }
+  .feedback-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(178,58,72,0.10);
+    border: 1.5px solid var(--accent3);
+    padding: 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    max-width: 420px;
+  }
+  .feedback-card .user {
+    font-weight: 600;
+    color: var(--accent2);
+    font-size: 1rem;
+  }
+  .feedback-card .text {
+    color: var(--cordovan);
+    font-size: 0.98rem;
+  }
+  /* Responsive */
+  /* Additional spacing and layout improvements */
+  .dashboard-section {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: var(--section-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+  }
+  
+  .dashboard-section h2 {
+    color: var(--accent2);
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+  }
+
+  .overview-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .stat-card {
+    background: var(--section-card);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+
+  .recently-viewed-section {
+    margin-top: 3rem;
+  }
+
+  .recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .product-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .offers-section {
+    margin-top: 3rem;
+  }
+
+  .offers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .offer-card {
+    background: linear-gradient(135deg, var(--accent2) 0%, var(--cordovan) 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .quiz-section {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .quiz-form {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .quiz-form select,
+  .quiz-form input {
+    padding: 1rem;
+    border-radius: 8px;
+    border: 2px solid var(--accent3);
+  }
+
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .review-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+
+  .feedback-section {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .feedback-form {
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .profile-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    margin-top: 2rem;
+  }
+
+  .profile-card,
+  .address-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+
+  .support-section {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .support-btns {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .support-btn {
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    background: var(--accent2);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .support-btn:hover {
+    background: var(--cordovan);
+  }
+
+  /* Responsive design */
+  @media (max-width: 900px) {
+    .dashboard-layout { flex-direction: column; }
+    .sidebar { 
+      width: 100%; 
+      height: auto; 
+      flex-direction: row; 
+      gap: 0.5rem; 
+      padding: 1rem; 
+      border-radius: 0 0 18px 18px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: white;
+    }
+    .sidebar h2 { display: none; }
+    .sidebar-nav { 
+      flex-direction: row; 
+      gap: 0.5rem; 
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .sidebar-nav button { 
+      flex: 0 1 auto;
+      font-size: 0.9rem; 
+      padding: 0.5rem 1rem;
+      white-space: nowrap;
+    }
+    .main-content { 
+      margin: 0; 
+      border-radius: 0 0 32px 32px; 
+      padding: 1.5rem;
+    }
+    .dashboard-section {
+      padding: 1.5rem;
+    }
+  }
+</style>
+<div class="dashboard-bg">
+  <div class="dashboard-layout">
+    <nav class="sidebar">
+      <h2>My Dashboard</h2>
+      <div class="sidebar-nav">
+        <button class="active" data-section="overview">Overview</button>
+        <button data-section="recently">Recently Viewed</button>
+        <button data-section="recommend">Recommendations</button>
+        <button data-section="offers">Offers</button>
+        <button data-section="quiz">Style Quiz</button>
+        <button data-section="reviews">Reviews</button>
+        <button data-section="feedback">Feedback</button>
+        <button data-section="recent-feedback">Recent Feedback</button>
+        <button data-section="profile">Profile</button>
+        <button data-section="support">Support</button>
+      </div>
+    </nav>
+    <main class="main-content">
+      <section class="dashboard-section active" id="section-overview">
+        <h2>Welcome, {{ username or session.get('username', 'User') }}!</h2>
+        <p style="font-size:1.1rem;">Here's a quick overview of your Dressly experience. Use the menu to explore more features!</p>
+        <div class="overview-stats">
+          <div class="stat-card">
+            <div style="font-size:2.2rem;font-weight:700;color:var(--accent2);">{{ order_count }}</div>
+            <div style="font-size:1.1rem;color:var(--accent2);">Orders</div>
+          </div>
+          <div class="stat-card">
+            <div style="font-size:2.2rem;font-weight:700;color:var(--accent2);">{{ review_count }}</div>
+            <div style="font-size:1.1rem;color:var(--accent2);">Reviews</div>
+          </div>
+          <div class="stat-card">
+            <div style="font-size:2.2rem;font-weight:700;color:var(--accent2)">${{ "%.2f"|format(total_spent) }}</div>
+            <div style="font-size:1.1rem;color:var(--accent2);">Total Spent</div>
+          </div>
+        </div>
+        <div class="overview-stats">
+          <div class="stat-card">
+            <h3>Most Recent Order</h3>
+            <div class="stat-content">
+              {% if recent_order and recent_order.items %}
+                <div class="order-details">
+                  {{ recent_order.items }}<br>
+                  <span class="delivery-date">Delivered: {{ recent_order.date }}</span>
+                </div>
+              {% else %}
+                <div class="no-data">No orders yet</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="stat-card">
+            <h3>Last Login</h3>
+            <div class="stat-content">
+              {{ last_login or 'No login data' }}
+            </div>
+          </div>
+          <div class="stat-card">
+            <h3>Favorite Category</h3>
+            <div class="stat-content">
+              {{ favorite_category }}
+            </div>
+          </div>
+          <div class="stat-card">
+            <h3>Account Created</h3>
+            <div class="stat-content">
+              {{ account_created }}
+            </div>
+          </div>
+        </div>
+
+        <style>
+          .stat-card {
+            background: var(--section-card);
+            border-radius: 12px;
+            padding: 1.8rem;
+            box-shadow: var(--shadow);
+          }
+          
+          .stat-card h3 {
+            font-size: 1.1rem;
+            color: var(--accent2);
+            font-weight: 600;
+            margin-bottom: 1rem;
+          }
+          
+          .stat-content {
+            font-size: 1rem;
+            color: var(--cordovan);
+          }
+          
+          .order-details {
+            line-height: 1.5;
+          }
+          
+          .delivery-date {
+            font-size: 0.95rem;
+            color: var(--accent3);
+            display: block;
+            margin-top: 0.5rem;
+          }
+          
+          .no-data {
+            color: var(--accent3);
+            font-style: italic;
+          }
+        </style>
+        </div>
+      </section>
+      <section class="dashboard-section" id="section-recently">
+        <h2>Recently Viewed</h2>
+        <div class="recently-viewed-carousel">
+          <div class="recently-viewed-card">
+            <img src="/static/red.jpg" alt="Red Party Dress">
+            <div class="title">Red Party Dress</div>
+            <div class="desc">Elegant and bold.</div>
+          </div>
+          <div class="recently-viewed-card">
+            <img src="/static/blue.jpg" alt="Blue Formal Dress">
+            <div class="title">Blue Formal Dress</div>
+            <div class="desc">Statement piece for galas.</div>
+          </div>
+          <div class="recently-viewed-card">
+            <img src="/static/pinkmaxi.jpg" alt="Pink Maxi Dress">
+            <div class="title">Pink Maxi Dress</div>
+            <div class="desc">Flowy and elegant.</div>
+          </div>
+        </div>
+        <div style="margin-top:1.5rem;font-size:1rem;color:var(--accent2);">Tip: Click on a product to view details or add to cart!</div>
+      </section>
+      <section class="dashboard-section" id="section-recommend">
+        <h2>Recommended for You</h2>
+        <div class="recommend-grid">
+          <div class="recommend-card">
+            <img src="/static/green.jpg" alt="Green Mini Dress">
+            <div class="title">Green Mini Dress</div>
+            <div class="desc">Fun and flirty for parties.</div>
+          </div>
+          <div class="recommend-card">
+            <img src="/static/yellow.jpg" alt="Yellow Summer Dress">
+            <div class="title">Yellow Summer Dress</div>
+            <div class="desc">Bright and playful for sunny days.</div>
+          </div>
+          <div class="recommend-card">
+            <img src="/static/beige.jpg" alt="Beige Work Dress">
+            <div class="title">Beige Work Dress</div>
+            <div class="desc">Chic and comfortable for the office.</div>
+          </div>
+        </div>
+        <div style="margin-top:1.5rem;font-size:1rem;color:var(--accent2);">Personalized picks just for you!</div>
+      </section>
+      <section class="dashboard-section" id="section-offers">
+        <h2>Personalized Offers & Discounts</h2>
+        <div class="offers-list">
+          <div class="offer-card">
+            <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#fff"/><path d="M7 13l3 3 7-7" stroke="#b23a48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            15% OFF on your next purchase!
+          </div>
+          <div class="offer-card">
+            <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="12" fill="#fff"/><path d="M8 12l2 2 4-4" stroke="#b23a48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Free shipping on orders over $100
+          </div>
+          <div class="offer-card">
+            <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="12" fill="#fff"/><path d="M12 8v4l3 3" stroke="#b23a48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Exclusive: Early access to new arrivals
+          </div>
+        </div>
+        <div style="margin-top:1.5rem;font-size:1rem;color:var(--accent2);">Check back often for new deals!</div>
+      </section>
+      <section class="dashboard-section" id="section-quiz">
+        <h2>Style Quiz</h2>
+        <form class="quiz-form">
+          <label for="favColor">Favorite Color</label>
+          <select id="favColor" name="favColor">
+            <option>Red</option><option>Blue</option><option>Black</option><option>White</option><option>Yellow</option><option>Green</option><option>Pink</option><option>Beige</option>
+          </select>
+          <label for="favStyle">Preferred Style</label>
+          <select id="favStyle" name="favStyle">
+            <option>Party</option><option>Casual</option><option>Formal</option><option>Work</option><option>Summer</option><option>Maxi</option><option>Midi</option><option>Mini</option>
+          </select>
+          <label for="budget">Budget</label>
+          <input type="number" id="budget" name="budget" placeholder="$100">
+          <button type="submit">Update Preferences</button>
+        </form>
+        <div style="margin-top:1.5rem;font-size:1rem;color:var(--accent2);">Update your preferences for better recommendations!</div>
+      </section>
+      <section class="dashboard-section" id="section-reviews">
+        <h2>My Reviews</h2>
+        <div class="reviews-list">
+          <div class="review-card">
+            <div class="review-title">Red Party Dress</div>
+            <div class="review-rating">★★★★★</div>
+            <div class="review-text">Absolutely loved it! The fit and color are perfect.</div>
+          </div>
+          <div class="review-card">
+            <div class="review-title">Beige Work Dress</div>
+            <div class="review-rating">★★★★☆</div>
+            <div class="review-text">Very comfortable for office wear. Would recommend.</div>
+          </div>
+        </div>
+        <div style="margin-top:1.5rem;font-size:1rem;color:var(--accent2);">Share your experience with others!</div>
+      </section>
+      <section class="dashboard-section" id="section-feedback">
+        <h2>Share Your Feedback</h2>
+        <form class="feedback-form" id="feedbackForm">
+          <label for="feedbackText">Your Feedback</label>
+          <textarea id="feedbackText" name="feedbackText" required maxlength="300" placeholder="Let us know your thoughts..."></textarea>
+          <button type="submit">Submit Feedback</button>
+        </form>
+        <div style="margin-top:1.5rem;font-size:1rem;color:var(--accent2);">We value your feedback to improve Dressly!</div>
+      </section>
+      <section class="dashboard-section" id="section-recent-feedback">
+        <h2>Recent Feedback</h2>
+        <div class="recent-feedback-list" id="recentFeedbackList">
+          <!-- Feedback cards will be inserted here by JS -->
+        </div>
+        <div style="margin-top:1.5rem;font-size:1rem;color:var(--accent2);">See what others are saying about Dressly!</div>
+      </section>
+      <section class="dashboard-section" id="section-profile">
+        <h2>Profile & Address Management</h2>
+        <div class="profile-section">
+          <div class="profile-card">
+            <h3>Profile</h3>
+            <label for="username">Username</label>
+            <input type="text" id="username" value="{{ session.get('username', 'JaneDoe') }}" readonly>
+            <label for="email">Email</label>
+            <input type="email" id="email" value="janedoe@email.com">
+            <label for="password">Password</label>
+            <input type="password" id="password" value="********">
+            <button type="button">Update Profile</button>
+          </div>
+          <div class="address-card">
+            <h3>Address</h3>
+            <label for="address">Address</label>
+            <input type="text" id="address" value="123 Main St, City, Country">
+            <label for="zip">ZIP Code</label>
+            <input type="text" id="zip" value="123456">
+            <button type="button">Update Address</button>
+          </div>
+        </div>
+      </section>
+      <section class="dashboard-section" id="section-support">
+        <h2>Support</h2>
+        <div class="support-section">
+          <div>
+            <span style="font-size:1.3rem;font-weight:700;">Need Help?</span>
+            <span>Our support team is here for you 24/7.</span>
+          </div>
+          <div>
+            <button class="support-btn">Chat Now</button>
+            <button class="support-btn">FAQs</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<script>
+  const navButtons = document.querySelectorAll('.sidebar-nav button');
+  const sections = document.querySelectorAll('.dashboard-section');
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const sectionId = 'section-' + btn.getAttribute('data-section');
+      sections.forEach(sec => sec.classList.remove('active'));
+      document.getElementById(sectionId).classList.add('active');
+    });
+  });
+
+  // Feedback form logic (localStorage for demo)
+  const feedbackForm = document.getElementById('feedbackForm');
+  const feedbackList = document.getElementById('recentFeedbackList');
+  function renderFeedback() {
+    feedbackList.innerHTML = '';
+    const feedbacks = JSON.parse(localStorage.getItem('dresslyFeedbacks') || '[]');
+    feedbacks.slice(-5).reverse().forEach(fb => {
+      const card = document.createElement('div');
+      card.className = 'feedback-card';
+      card.innerHTML = `<div class="user">${fb.user}</div><div class="text">${fb.text}</div>`;
+      feedbackList.appendChild(card);
+    });
+  }
+  if (feedbackForm) {
+    feedbackForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const text = document.getElementById('feedbackText').value.trim();
+      if (!text) return;
+      // Use double quotes for Jinja variable to avoid JS syntax error
+      const user = "{{ session.get('username', 'Anonymous') }}";
+      const feedbacks = JSON.parse(localStorage.getItem('dresslyFeedbacks') || '[]');
+      feedbacks.push({ user, text });
+      localStorage.setItem('dresslyFeedbacks', JSON.stringify(feedbacks));
+      document.getElementById('feedbackText').value = '';
+      alert('Thank you for your feedback!');
+    });
+  }
+  // Render feedback when Recent Feedback section is shown
+  document.querySelector('button[data-section="recent-feedback"]').addEventListener('click', renderFeedback);
+</script>
+{% endblock %}

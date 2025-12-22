@@ -1,0 +1,439 @@
+{% extends "base.html" %}
+
+{% block title %}Our Services - Dressly{% endblock %}
+
+{% block content %}
+<style>
+    /* Reset and base styles */
+    section {
+        width: 100%;
+        position: relative;
+    }
+
+    /* Custom Styles */
+    :root {
+        --primary-color: #0A1B2A;
+        --secondary-color: #C45A6C;
+        --accent-color: #1E3246;
+        --dark-blue: #0A1B2A;
+        --medium-blue: #1E3246;
+        --light-blue: #2C4356;
+        --burgundy: #C45A6C;
+        --text-light: #ffffff;
+        --text-muted: #8A9BAE;
+    }
+
+    body {
+        background-color: var(--dark-blue);
+        color: var(--text-light);
+    }
+    
+    .text-muted {
+        color: var(--text-muted) !important;
+    }
+
+    .service-section {
+        background-color: var(--medium-blue);
+        padding: 80px 0;
+    }
+
+    .feature-section {
+        background-color: var(--light-blue);
+    }
+
+    .service-hero {
+        background: linear-gradient(rgba(31, 31, 96, 0.295), rgba(164, 38, 59, 0.377)),
+            url('https://images.pexels.com/photos/994523/pexels-photo-994523.jpeg');
+        background-size: cover;
+        background-position: center;
+        color: #ffffff;
+        padding: 150px 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        min-height: 60vh;
+    }
+
+    .service-hero h1 {
+        font-size: 4rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        animation: fadeInDown 1s ease;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .service-hero p {
+        font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto;
+        animation: fadeInUp 1s ease;
+        color: #ffffff;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .service-card {
+        background: var(--medium-blue);
+        border-radius: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .service-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        border-color: var(--burgundy);
+    }
+
+    .service-image {
+        width: 100%;
+        height: 400px;
+        overflow: hidden;
+        position: relative;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+
+    .service-image::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 30%;
+        background: linear-gradient(to bottom, rgba(30, 50, 70, 0), var(--medium-blue));
+        pointer-events: none;
+    }
+
+    .service-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .service-card:hover .service-image img {
+        transform: scale(1.05);
+    }
+
+    .service-content {
+        padding: 2rem;
+        background: var(--medium-blue);
+    }
+
+    .service-content h3 {
+        color: var(--text-light);
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .service-content p {
+        color: var(--text-muted);
+        line-height: 1.6;
+        margin-bottom: 0;
+    }
+
+    .feature-section {
+        background: var(--dark-blue);
+        padding: 100px 0;
+        position: relative;
+    }
+
+    .feature-card {
+        background: var(--medium-blue);
+        border-radius: 15px;
+        height: 100%;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 30px;
+        overflow: hidden;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--burgundy);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .feature-image {
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .feature-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .feature-card:hover .feature-image img {
+        transform: scale(1.05);
+    }
+
+    .feature-content {
+        padding: 1.5rem;
+        background: var(--medium-blue);
+    }
+
+    .feature-card h4 {
+        color: var(--text-light);
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .feature-card p {
+        color: var(--text-muted);
+        line-height: 1.6;
+        margin-bottom: 0;
+        text-align: center;
+    }
+
+    .cta-section {
+        background: linear-gradient(135deg, var(--dark-blue), var(--burgundy));
+        padding: 100px 0;
+        color: #ffffff;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(10, 27, 42, 0.9), transparent);
+        z-index: 1;
+    }
+
+    .cta-section .container {
+        position: relative;
+        z-index: 2;
+    }
+
+    .cta-section h2 {
+        color: #ffffff;
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+    }
+
+    .cta-section p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-cta {
+        background: #ffffff;
+        color: var(--primary-color);
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-decoration: none;
+        font-size: 1.1rem;
+    }
+
+    .btn-cta:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="service-hero">
+    <div class="container">
+        <h1>Our Services</h1>
+        <p>Discover personalized fashion recommendations tailored just for you. Experience the future of shopping with our AI-powered styling solutions.</p>
+    </div>
+</section>
+
+<!-- Main Services Section -->
+<section class="services-section py-5">
+    <div class="container">
+        <div class="section-title text-center mb-5">
+            <h2 class="mb-3">What We Offer</h2>
+            <p class="lead text-muted">Explore our range of innovative fashion services</p>
+        </div>
+        <div class="row">
+            <!-- Personal Styling -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="https://t3.ftcdn.net/jpg/02/83/74/32/360_F_283743262_L78cskGC8kSJ9USzjYFZ9YkB8Pb0Wwai.jpg" alt="Personal Styling">
+                    </div>
+                    <div class="service-content">
+                        <h3 class="text-center mb-3">Personal Styling</h3>
+                        <p class="text-muted">Get personalized outfit recommendations based on your style preferences, body type, and occasion. Our AI analyzes thousands of fashion combinations to find your perfect look.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Wardrobe -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="https://images.moneycontrol.com/static-mcnews/2024/09/20240917084810_smart-tips.jpg?impolicy=website&width=1280&height=720" alt="Smart Wardrobe">
+                    </div>
+                    <div class="service-content">
+                        <h3 class="text-center mb-3">Smart Wardrobe</h3>
+                        <p class="text-muted">Our intelligent system learns your style preferences and suggests new pieces that complement your existing wardrobe, helping you build a versatile collection.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Analytics -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="{{ url_for('static', filename='styleanalytics.jpg') }}" alt="Style Analytics">
+                    </div>
+                    <div class="service-content">
+                        <h3 class="text-center mb-3">Style Analytics</h3>
+                        <p class="text-muted">Get detailed insights into your fashion preferences and shopping patterns. Understand your style better with our advanced analytics dashboard.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="feature-section">
+    <div class="container">
+        <div class="section-title text-center mb-5">
+            <h2 class="mb-3">Why Choose Dressly?</h2>
+            <p class="lead text-muted">Experience the perfect blend of technology and fashion</p>
+        </div>
+        <div class="row">
+            <!-- AI-Powered -->
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-image">
+                        <img src="https://static.vecteezy.com/system/resources/thumbnails/035/186/407/small_2x/ai-generated-store-concept-market-fashion-sale-modern-hand-technology-female-business-mall-shopping-photo.jpg" alt="AI-Powered Fashion">
+                    </div>
+                    <div class="feature-content">
+                        <h4>AI-Powered Recommendations</h4>
+                        <p>Our advanced AI algorithms analyze your preferences and style patterns to provide highly accurate fashion recommendations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personalization -->
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-image">
+                        <img src="https://www.zeiss.co.in/content/dam/vis-b2c/reference-master/images/better-vision/lifestyle-fashion/mini-style-guide-with-a-huge-perspective-spectacles-and-fashion-%E2%80%93-an-unbeatable-team/zeiss_mini-style-guide.jpg/_jcr_content/renditions/original.image_file.1024.512.0,160,1920,1120.file/zeiss_mini-style-guide.jpg" alt="Personalized Experience">
+                    </div>
+                    <div class="feature-content">
+                        <h4>Personalized Experience</h4>
+                        <p>Every suggestion is tailored to your unique style, ensuring you get recommendations that match your preferences perfectly.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-time Updates -->
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-image">
+                        <img src="{{ url_for('static', filename='latest.jpg') }}" alt="Real-time Updates">
+                    </div>
+                    <div class="feature-content">
+                        <h4>Real-time Updates</h4>
+                        <p>Stay up-to-date with the latest fashion trends and receive instant style recommendations based on current trends.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Easy Integration -->
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-image">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgQFbe9EaCN_YUIAuC_SHB7tJr8ChmBvFuHw&s" alt="Easy Integration">
+                    </div>
+                    <div class="feature-content">
+                        <h4>Easy Integration</h4>
+                        <p>Seamlessly connect your existing wardrobe and shopping preferences to get started with personalized recommendations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Analytics -->
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-image">
+                        <img src="{{ url_for('static', filename='analytics2.jpg') }}" alt="Smart Analytics">
+                    </div>
+                    <div class="feature-content">
+                        <h4>Smart Analytics</h4>
+                        <p>Get detailed insights into your style preferences and shopping patterns with our comprehensive analytics dashboard.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 24/7 Support -->
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-image">
+                        <img src="https://vervoe.com/wp-content/uploads/2022/03/Blog-FeaturedImage-1576x1064-1.png" alt="24/7 Support">
+                    </div>
+                    <div class="feature-content">
+                        <h4>24/7 Support</h4>
+                        <p>Our dedicated support team is always available to help you with any questions or concerns about our services.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Ready to Transform Your Style?</h2>
+            <p>Join thousands of satisfied customers who have discovered their perfect style with Dressly</p>
+            <a href="{{ url_for('register') }}" class="btn-cta">Get Started Today</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

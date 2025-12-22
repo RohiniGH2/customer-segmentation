@@ -1,0 +1,1284 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - Dressly{% endblock %}
+
+{% block content %}
+<style>
+  /* Custom Styles */
+  :root {
+    --primary-color: #ff6b6b;
+    --secondary-color: #4ecdc4;
+    --accent-color: #ffe66d;
+    --text-color: #2d3436;
+    --light-bg: #f8f9fa;
+    --gradient-start: #ff6b6b;
+    --gradient-end: #4ecdc4;
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --hover-transform: translateY(-10px);
+  }
+
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Hero header */
+  .about-header {
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), 
+                url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 200px 0 150px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 60%);
+    animation: pulse 4s infinite;
+  }
+
+  .about-header h1 {
+    font-size: 4.5rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 1s ease forwards;
+  }
+
+  .about-header p {
+    font-size: 1.5rem;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 1s ease 0.3s forwards;
+  }
+
+  /* Mission Section */
+  .mission-section {
+    background: linear-gradient(135deg, var(--light-bg) 0%, #ffffff 100%);
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mission-section::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to right bottom, transparent 49%, var(--light-bg) 50%);
+  }
+
+  .mission-card {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mission-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  }
+
+  .mission-card:hover {
+    transform: var(--hover-transform);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+  }
+
+  /* Values Section */
+  .values-section {
+    padding: 100px 0;
+    background: white;
+  }
+
+  .value-card {
+    border: none;
+    padding: 0;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #f5f7fa 0%, #e3e6e8 100%);
+    box-shadow: var(--card-shadow);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    color: #2c3338;
+    height: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .value-card:hover {
+    transform: var(--hover-transform);
+    box-shadow: 0 15px 40px rgba(52, 73, 94, 0.15);
+  }
+
+  .value-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .value-content {
+    padding: 2rem;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+  }
+
+  .value-content p {
+    text-align: justify;
+    color: #4a5568;
+  }
+
+  .value-content h4 {
+    text-align: center;
+    color: #2d3748;
+    font-weight: 600;
+  }
+
+
+
+  /* Stats Section */
+  .impact-section {
+    background: #2F4454;
+    padding: 100px 0;
+    position: relative;
+  }
+
+  .section-tag {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(218, 123, 147, 0.1);
+    color: #DA7B93;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    color: #ffffff;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-divider {
+    width: 60px;
+    height: 3px;
+    background: #DA7B93;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .section-divider::before,
+  .section-divider::after {
+    content: '';
+    position: absolute;
+    height: 3px;
+    width: 30px;
+    background: #376E6F;
+  }
+
+  .section-divider::before {
+    left: -40px;
+  }
+
+  .section-divider::after {
+    right: -40px;
+  }
+
+  .impact-card {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 40px 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .impact-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(to right, #DA7B93, #376E6F);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .impact-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .impact-card:hover::before {
+    opacity: 1;
+  }
+
+  .impact-icon-wrapper {
+    margin-bottom: 25px;
+    transition: all 0.4s ease;
+  }
+
+  .impact-card:hover .impact-icon-wrapper {
+    transform: scale(1.1) translateY(-5px);
+  }
+
+  .impact-icon-wrapper i {
+    font-size: 3rem;
+    color: #DA7B93;
+    transition: all 0.3s ease;
+  }
+
+  .impact-card:hover .impact-icon-wrapper i {
+    color: #376E6F;
+  }
+
+  .impact-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .impact-number {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 10px;
+    font-family: 'Arial', sans-serif;
+    line-height: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .impact-label {
+    font-size: 1.1rem;
+    color: #DA7B93;
+    margin-bottom: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .impact-description {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .stats-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .stat-number {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, white, var(--accent-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0;
+    transform: scale(0.5);
+    animation: scaleIn 0.5s ease forwards;
+  }
+
+  /* Timeline Section */
+  .timeline-section {
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+    background-color: #0a192f;
+    color: #ffffff;
+  }
+
+  .timeline-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="%23000" opacity="0.03"/></svg>') repeat;
+  }
+
+  .timeline-section > .container {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 30px;
+  }
+
+  .timeline-heading {
+    color: #ffffff;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    letter-spacing: 1px;
+    opacity: 0.9;
+  }
+
+  .timeline-divider {
+    width: 60px;
+    height: 3px;
+    background: #e63946;
+    margin: 0 auto;
+    position: relative;
+    opacity: 0.8;
+  }
+
+  .timeline-vertical {
+    position: relative;
+    padding: 60px 0;
+    margin-top: 30px;
+  }
+
+  .timeline-line {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    background: rgba(230, 57, 70, 0.3);
+    z-index: 1;
+  }
+
+  .timeline-items {
+    position: relative;
+    z-index: 2;
+  }
+
+  .timeline-item {
+    width: 100%;
+    margin-bottom: 70px;
+    position: relative;
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+
+  .timeline-item::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    background: #e63946;
+    border-radius: 50%;
+    position: absolute;
+    top: 10px;
+    border: 3px solid rgba(230, 57, 70, 0.3);
+  }
+
+  .timeline-item:nth-child(odd) {
+    padding-right: calc(50% + 30px);
+    text-align: right;
+  }
+
+  .timeline-item:nth-child(even) {
+    padding-left: calc(50% + 30px);
+    text-align: left;
+  }
+
+  .timeline-item:nth-child(odd)::before {
+    right: -8px;
+  }
+
+  .timeline-item:nth-child(even)::before {
+    left: -8px;
+  }
+
+  .timeline-image {
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .image-circle {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    border: 3px solid #f5f5f5;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+
+  .image-circle:hover {
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .image-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+  }
+
+  .image-circle:hover img {
+    transform: scale(1.1);
+  }
+
+  .circle-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+      rgba(255, 107, 107, 0.3), 
+      rgba(78, 205, 196, 0.3));
+    border-radius: 50%;
+    opacity: 0.2;
+    transition: all 0.3s ease;
+  }
+
+  .timeline-year {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 15px;
+    opacity: 0.9;
+    position: relative;
+    display: inline-block;
+  }
+
+  [data-aos="fade-right"] {
+    opacity: 0;
+    transform: translateX(-100px);
+    transition: transform 0.8s ease, opacity 0.8s ease;
+  }
+
+  [data-aos="fade-left"] {
+    opacity: 0;
+    transform: translateX(100px);
+    transition: transform 0.8s ease, opacity 0.8s ease;
+  }
+
+  [data-aos].aos-animate {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .timeline-content {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 25px;
+    border-radius: 6px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .timeline-content h3 {
+    color: #e63946;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .timeline-content p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .timeline-item:hover .timeline-content {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(230, 57, 70, 0.3);
+  }
+
+  .timeline-item:hover .circle-overlay {
+    opacity: 0.6;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-line {
+      left: 20px;
+    }
+
+    .timeline-item {
+      padding-left: 60px !important;
+      padding-right: 20px !important;
+      text-align: left !important;
+      margin-bottom: 50px;
+    }
+
+    .timeline-item::before {
+      left: 12px !important;
+    }
+
+    .timeline-content {
+      max-width: 100%;
+    }
+
+    .timeline-year {
+      font-size: 1.75rem;
+    }
+
+    .timeline-heading {
+      font-size: 2.5rem;
+    }
+  }
+  
+  
+  /* Team Section */
+  .team-section {
+    padding: 60px 0;
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .team-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,107,107,0.1), transparent);
+  }
+
+  .team-section .row {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .team-section .col-lg-4 {
+    display: flex;
+  }
+
+  .team-member {
+    text-align: left;
+    margin-bottom: 2rem;
+    background: rgba(255,107,107,0.03);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+    padding: 1.5rem;
+    border: 1px solid rgba(255,107,107,0.2);
+    border-radius: 16px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(255,107,107,0.1);
+    width: 100%;
+    transform-origin: center;
+    transform: translateY(0) scale(1);
+    cursor: pointer;
+  }
+
+  .team-member:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(255,107,107,0.2);
+  }
+
+  .team-member-img {
+    width: 140px;
+    height: 140px;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    margin-right: 2rem;
+    flex-shrink: 0;
+  }
+
+  .team-member-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.5s ease;
+  }
+
+  .team-member-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, 
+      rgba(255,107,107,0.2), 
+      rgba(78,205,196,0.2));
+    opacity: 1;
+    transition: all 0.4s ease;
+  }
+
+  .team-member-info {
+    flex: 1;
+  }
+
+  .team-member h4 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .team-member .position {
+    font-size: 1rem;
+    color: #2d3436;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,107,107,0.1);
+    font-weight: 500;
+  }
+
+  .team-member .bio {
+    font-size: 0.95rem;
+    color: #636e72;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .team-member-social {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .team-member-social a {
+    color: #2d3436;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.03);
+  }
+
+  .team-member-social a:hover {
+    color: white;
+    background: #ff6b6b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255,107,107,0.3);
+  }
+
+  @media (max-width: 768px) {
+    .team-member {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .team-member-img {
+      margin-right: 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .team-member-social {
+      justify-content: center;
+    }
+  }
+
+  /* Awards Section */
+  .awards-section {
+    padding: 120px 0;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .awards-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 0 L100 50 L50 100 L0 50 Z" fill="%23000" opacity="0.02"/></svg>') repeat;
+  }
+
+  .award-item {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: rgba(255, 107, 107, 0.03);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 107, 107, 0.1);
+  }
+
+  .award-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, #ffd700, #ff6b6b);
+    transform: scaleX(1);
+  }
+
+  .award-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  .award-icon {
+    font-size: 3.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    display: inline-block;
+  }
+
+  .award-icon i {
+    background: linear-gradient(45deg, #ffd700, #ff6b6b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    z-index: 1;
+  }
+
+  .award-icon::after {
+    content: '';
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    transition: all 0.3s ease;
+  }
+
+  .award-item:hover .award-icon::after {
+    width: 70px;
+    height: 70px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
+  }
+
+  .award-item h4 {
+    color: #ff6b6b;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .award-item p {
+    color: #636e72;
+    font-size: 1rem;
+    margin: 0;
+    transition: all 0.3s ease;
+  }
+
+  .award-item:hover h4 {
+    transform: translateY(-5px);
+  }
+
+  .award-item:hover p {
+    transform: translateY(-3px);
+  }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+  }
+
+  @keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.6; }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 992px) {
+    .about-header h1 {
+      font-size: 3.5rem;
+    }
+    
+    .timeline-item {
+      width: calc(100% - 30px);
+      margin-left: auto !important;
+      margin-right: 0 !important;
+    }
+    
+    .timeline::before {
+      left: 0;
+    }
+    
+    .timeline-item::before {
+      left: -40px !important;
+      right: auto !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .about-header h1 {
+      font-size: 3rem;
+    }
+    
+    .stat-number {
+      font-size: 3rem;
+    }
+    
+    .team-member-img {
+      width: 200px;
+      height: 200px;
+    }
+  }
+</style>
+
+<!-- Header Section -->
+<section class="about-header">
+  <div class="container">
+    <h1 class="fw-bold">About Dressly</h1>
+    <p class="lead">Redefining Fashion Since 2020</p>
+  </div>
+</section>
+
+<!-- Mission Section -->
+<section class="mission-section">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="mission-card h-100">
+          <h2 class="mb-4">Our Mission</h2>
+          <p class="lead text-primary mb-4">To empower individuals through accessible, sustainable, and stylish fashion that celebrates uniqueness and confidence.</p>
+          <p class="mb-0">At Dressly, we believe that fashion should be accessible to everyone. We're committed to creating a seamless shopping experience that combines quality, affordability, and style. Our mission is to transform the way people shop for fashion, making it more personal, sustainable, and enjoyable.</p>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="mission-card h-100">
+          <h2 class="mb-4">Our Vision</h2>
+          <p class="lead text-secondary mb-4">To become the world's most trusted and innovative fashion e-commerce platform.</p>
+          <p class="mb-0">We envision a future where shopping for clothes is not just a transaction but an experience that brings joy, confidence, and satisfaction to our customers. Through cutting-edge technology and sustainable practices, we're building a fashion ecosystem that benefits both people and the planet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Values Section -->
+<section class="values-section">
+  <div class="container">
+    <h2 class="text-center mb-5">Our Core Values</h2>
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="value-card text-center">
+          <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+               alt="Customer Service" 
+               class="value-image">
+          <div class="value-content">
+            <h4 class="mb-3">Customer First</h4>
+            <p class="mb-0">Every decision we make starts with our customers' needs and desires in mind. We're dedicated to providing exceptional service and experiences that exceed expectations.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="value-card text-center">
+          <img src="https://www.madgeek.in/wp-content/uploads/2023/10/1327127856-1024x683.webp" 
+               alt="Sustainability" 
+               class="value-image">
+          <div class="value-content">
+            <h4 class="mb-3">Sustainability</h4>
+            <p class="mb-0">We're committed to reducing our environmental impact through responsible practices. Our goal is to make sustainable fashion accessible and appealing to everyone.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="value-card text-center">
+          <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+               alt="Innovation" 
+               class="value-image">
+          <div class="value-content">
+            <h4 class="mb-3">Innovation</h4>
+            <p class="mb-0">We constantly push boundaries to improve the shopping experience. Through technology and creativity, we're reimagining the future of fashion retail.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Impact Section -->
+<section class="impact-section">
+  <div class="container">
+    <div class="row mb-5">
+      <div class="col-lg-6 mx-auto text-center">
+        <span class="section-tag">Our Growth</span>
+        <h2 class="section-title">Making a Difference in Fashion</h2>
+        <div class="section-divider"></div>
+      </div>
+    </div>
+    
+    <div class="row g-4">
+      <div class="col-lg-3 col-md-6">
+        <div class="impact-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="impact-icon-wrapper">
+            <i class="bi bi-people-fill"></i>
+          </div>
+          <div class="impact-content">
+            <div class="impact-number" id="customerCount">25,000+</div>
+            <h4 class="impact-label">Happy Customers</h4>
+            <p class="impact-description">Satisfied customers who trust our fashion expertise</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-6">
+        <div class="impact-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="impact-icon-wrapper">
+            <i class="bi bi-bag-heart-fill"></i>
+          </div>
+          <div class="impact-content">
+            <div class="impact-number" id="productCount">5,000+</div>
+            <h4 class="impact-label">Fashion Products</h4>
+            <p class="impact-description">Curated styles for every occasion</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-6">
+        <div class="impact-card" data-aos="fade-up" data-aos-delay="300">
+          <div class="impact-icon-wrapper">
+            <i class="bi bi-globe2"></i>
+          </div>
+          <div class="impact-content">
+            <div class="impact-number" id="countriesCount">50+</div>
+            <h4 class="impact-label">Countries Served</h4>
+            <p class="impact-description">Global reach with local fashion understanding</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-3 col-md-6">
+        <div class="impact-card" data-aos="fade-up" data-aos-delay="400">
+          <div class="impact-icon-wrapper">
+            <i class="bi bi-box-seam-fill"></i>
+          </div>
+          <div class="impact-content">
+            <div class="impact-number" id="ordersCount">100,000+</div>
+            <h4 class="impact-label">Orders Delivered</h4>
+            <p class="impact-description">Style stories delivered to doorsteps</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Timeline Section -->
+<section class="timeline-section">
+  <div class="container">
+    <div class="text-center">
+      <h2 class="timeline-heading">A HISTORY OF DRESSLY</h2>
+      <div class="timeline-divider mb-5"></div>
+    </div>
+    
+    <div class="timeline-vertical">
+      <div class="timeline-line"></div>
+      <div class="timeline-items">
+        <!-- 2020 -->
+        <div class="timeline-item" data-aos="fade-right">
+          <div class="timeline-content">
+            <div class="timeline-year">2020</div>
+            <h3>Foundation</h3>
+            <p>Founded with a vision to revolutionize fashion retail through AI-driven personalization.</p>
+          </div>
+        </div>
+
+        <!-- 2021 -->
+        <div class="timeline-item" data-aos="fade-left">
+          <div class="timeline-content">
+            <div class="timeline-year">2021</div>
+            <h3>Market Entry</h3>
+            <p>Launched our revolutionary online platform with personalized fashion recommendations.</p>
+          </div>
+        </div>
+
+        <!-- 2022 -->
+        <div class="timeline-item" data-aos="fade-right">
+          <div class="timeline-content">
+            <div class="timeline-year">2022</div>
+            <h3>AI Integration</h3>
+            <p>Implemented advanced machine learning algorithms for precise style matching.</p>
+          </div>
+        </div>
+
+        <!-- 2023 -->
+        <div class="timeline-item" data-aos="fade-left">
+          <div class="timeline-content">
+            <div class="timeline-year">2023</div>
+            <h3>Global Expansion</h3>
+            <p>Extended our reach to multiple countries with localized style preferences.</p>
+          </div>
+        </div>
+
+        <!-- 2024 -->
+        <div class="timeline-item" data-aos="fade-right">
+          <div class="timeline-content">
+            <div class="timeline-year">2024</div>
+            <h3>Virtual Innovation</h3>
+            <p>Introduced virtual try-on technology and AR shopping experiences.</p>
+          </div>
+        </div>
+
+        <!-- 2025 -->
+        <div class="timeline-item" data-aos="fade-left">
+          <div class="timeline-content">
+            <div class="timeline-year">2025</div>
+            <h3>Sustainability Focus</h3>
+            <p>Launched eco-friendly fashion lines and sustainable packaging initiatives.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AOS Script -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true
+  });
+</script>
+
+
+<!-- Team Section -->
+<section class="team-section">
+  <div class="container">
+    <div class="text-center mb-4">
+      <h2 class="mb-3">Meet Our Leadership</h2>
+      <div class="mx-auto" style="width: 80px; height: 3px; background: linear-gradient(to right, var(--primary-color), var(--secondary-color));"></div>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="team-member" data-aos="fade-up">
+          <div class="team-member-img">
+            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="CEO">
+          </div>
+          <div class="team-member-info">
+            <h4>Joh Williams</h4>
+            <p class="position">Chief Executive Officer</p>
+            <p class="bio">Visionary leader with 15+ years of experience in fashion retail and e-commerce. Passionate about merging technology with fashion.</p>
+            <div class="team-member-social">
+              <a href="#"><i class="bi bi-linkedin"></i></a>
+              <a href="#"><i class="bi bi-twitter"></i></a>
+              <a href="#"><i class="bi bi-envelope"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="team-member" data-aos="fade-up" data-aos-delay="100">
+          <div class="team-member-img">
+            <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="COO">
+          </div>
+          <div class="team-member-info">
+            <h4>Sarah Chen</h4>
+            <p class="position">Chief Operating Officer</p>
+            <p class="bio">Operations expert with a proven track record in scaling fashion startups. Focused on sustainable and efficient business practices.</p>
+            <div class="team-member-social">
+              <a href="#"><i class="bi bi-linkedin"></i></a>
+              <a href="#"><i class="bi bi-twitter"></i></a>
+              <a href="#"><i class="bi bi-envelope"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="team-member" data-aos="fade-up" data-aos-delay="200">
+          <div class="team-member-img">
+            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="CTO">
+          </div>
+          <div class="team-member-info">
+            <h4>David Miller</h4>
+            <p class="position">Chief Technology Officer</p>
+            <p class="bio">Tech innovator specializing in AI and machine learning. Leading our efforts in personalizing the fashion experience.</p>
+            <div class="team-member-social">
+              <a href="#"><i class="bi bi-linkedin"></i></a>
+              <a href="#"><i class="bi bi-twitter"></i></a>
+              <a href="#"><i class="bi bi-envelope"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Awards Section -->
+<section class="awards-section">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="display-4 mb-3">Awards & Recognition</h2>
+      <div class="mx-auto" style="width: 100px; height: 3px; background: linear-gradient(to right, #ffd700, #ff6b6b);"></div>
+      <p class="text-muted mt-3">Celebrating our commitment to excellence and innovation</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="0">
+        <div class="award-item">
+          <div class="award-icon">
+            <i class="bi bi-trophy-fill"></i>
+          </div>
+          <h4>Best E-commerce Platform 2024</h4>
+          <p>Fashion Technology Awards</p>
+          <div class="award-shine"></div>
+        </div>
+      </div>
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="award-item">
+          <div class="award-icon">
+            <i class="bi bi-star-fill"></i>
+          </div>
+          <h4>Sustainability Excellence</h4>
+          <p>Global Retail Awards 2023</p>
+          <div class="award-shine"></div>
+        </div>
+      </div>
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="award-item">
+          <div class="award-icon">
+            <i class="bi bi-award-fill"></i>
+          </div>
+          <h4>Customer Service Excellence</h4>
+          <p>E-commerce Awards 2024</p>
+          <div class="award-shine"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+// Animated counter function with easing
+function animateCounter(element, target, duration) {
+  const start = 0;
+  const startTimestamp = performance.now();
+  
+  function easeOutQuart(x) {
+    return 1 - Math.pow(1 - x, 4);
+  }
+
+  function updateCounter(currentTime) {
+    const elapsed = currentTime - startTimestamp;
+    const progress = Math.min(elapsed / duration, 1);
+    
+    const currentValue = Math.floor(easeOutQuart(progress) * target);
+    element.textContent = currentValue.toLocaleString();
+    
+    if (progress < 1) {
+      requestAnimationFrame(updateCounter);
+    }
+  }
+  
+  requestAnimationFrame(updateCounter);
+}
+
+// Timeline animation
+function animateTimeline() {
+  const items = document.querySelectorAll('.timeline-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.5 });
+
+  items.forEach(item => observer.observe(item));
+}
+
+// Stats animation
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      animateCounter(document.getElementById('customerCount'), 1000000, 2000);
+      animateCounter(document.getElementById('productCount'), 5000, 2000);
+      animateCounter(document.getElementById('countriesCount'), 50, 2000);
+      animateCounter(document.getElementById('ordersCount'), 2000000, 2000);
+      statsObserver.disconnect();
+    }
+  });
+}, { threshold: 0.5 });
+
+// Initialize animations
+document.addEventListener('DOMContentLoaded', () => {
+  animateTimeline();
+  statsObserver.observe(document.querySelector('.stats-section'));
+});
+</script>
+{% endblock %}

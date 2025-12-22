@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}Manage Ads | Dressly Admin{% endblock %}
+{% block content %}
+<style>
+  :root {
+    --chocolate-cosmos: #412220;
+    --wine: #69212D;
+    --cordovan: #8C2F39;
+    --redwood: #B23A48;
+    --light-coral: #D77A7D;
+    --section-bg: #fff8f7;
+    --section-card: #fbeaec;
+    --section-border: #b23a48;
+    --accent: #b23a48;
+    --accent2: #8c2f39;
+    --accent3: #d77a7d;
+    --text-dark: #412220;
+    --text-light: #fff;
+    --shadow: 0 4px 24px rgba(178,58,72,0.10);
+  }
+  .ads-container {
+    max-width: 900px;
+    margin: 2.5rem auto;
+    padding: 2.5rem 2rem;
+    border-radius: 32px;
+    background: rgba(255,255,255,0.97);
+    box-shadow: var(--shadow);
+  }
+  .ads-section {
+    background: var(--section-card);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    border-left: 8px solid var(--section-border);
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  .ads-section h2 {
+    color: var(--accent);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    letter-spacing: 0.5px;
+  }
+  .ads-form label {
+    font-weight: 600;
+    color: var(--accent2);
+    margin-top: 0.5rem;
+  }
+  .ads-form input, .ads-form textarea, .ads-form select {
+    border-radius: 7px;
+    border: 1.5px solid var(--accent3);
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background: #fff8f7;
+    color: var(--cordovan);
+    margin-bottom: 0.7rem;
+    width: 100%;
+  }
+  .ads-form button {
+    background: var(--accent2);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 0.5rem 1.2rem;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    transition: background 0.2s;
+  }
+  .ads-form button:hover {
+    background: var(--accent3);
+  }
+  .ads-table th, .ads-table td {
+    padding: 0.7rem 1rem;
+    text-align: left;
+    color: var(--chocolate-cosmos);
+    font-size: 1rem;
+  }
+  .ads-table th {
+    background: var(--accent3);
+    color: #fff;
+    font-weight: 600;
+  }
+  .ads-table tr:nth-child(even) { background: #fbeaec; }
+  .ads-actions button {
+    margin-right: 0.5rem;
+  }
+</style>
+<div class="ads-container">
+  <section class="ads-section">
+    <h2>Create New Ad/Banner</h2>
+    <form class="ads-form" method="POST">
+      <label for="product_id">Product ID</label>
+      <input type="number" name="product_id" required>
+      <label for="title">Title</label>
+      <input type="text" name="title" required>
+      <label for="description">Description</label>
+      <textarea name="description" rows="2" required></textarea>
+      <label for="image">Image URL</label>
+      <input type="text" name="image">
+      <label for="target_segment">Target Segment (optional)</label>
+      <input type="number" name="target_segment">
+      <label for="start_date">Start Date</label>
+      <input type="date" name="start_date">
+      <label for="end_date">End Date</label>
+      <input type="date" name="end_date">
+      <label><input type="checkbox" name="is_active" checked> Active</label>
+      <button type="submit">Create Ad</button>
+    </form>
+  </section>
+  <section class="ads-section">
+    <h2>Current Ads/Banners</h2>
+    <table class="ads-table" style="width:100%">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Product</th>
+          <th>Title</th>
+          <th>Segment</th>
+          <th>Active</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ad in ads %}
+        <tr>
+          <td>{{ ad.id }}</td>
+          <td>{{ ad.product_id }}</td>
+          <td>{{ ad.title }}</td>
+          <td>{{ ad.target_segment or '-' }}</td>
+          <td>{{ 'Yes' if ad.is_active else 'No' }}</td>
+          <td>{{ ad.start_date or '-' }}</td>
+          <td>{{ ad.end_date or '-' }}</td>
+          <td class="ads-actions">
+            <form method="POST" action="{{ url_for('toggle_ad', ad_id=ad.id) }}" style="display:inline-block;">
+              <button type="submit" class="btn btn-sm btn-outline-primary">Toggle</button>
+            </form>
+            <form method="POST" action="{{ url_for('delete_ad', ad_id=ad.id) }}" style="display:inline-block;">
+              <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,865 @@
+<!-- index.html -->
+{% extends "base.html" %}
+{% block title %}Home | Dressly{% endblock %}
+
+{% block content %}
+<style>
+  :root {
+    --deep-mauve: #6D4250;
+    --dusty-pink: #C99A9A;
+    --pale-blush: #E9D3D0;
+    --muted-mauve: #B28B9A;
+    --dark-purple-grey: #6D4250;
+    --light: #fff;
+  }
+  body {
+    background: linear-gradient(135deg, var(--deep-mauve) 0%, var(--pale-blush) 100%);
+    color: var(--deep-mauve);
+  }
+  .search-bar {
+    background: var(--dark-purple-grey);
+    border-radius: 16px;
+    box-shadow: none;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .search-input {
+    border-radius: 8px 0 0 8px;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    width: 80%;
+    background: var(--pale-blush);
+    color: var(--deep-mauve);
+    font-size: 1.1rem;
+    box-shadow: none;
+    outline: none;
+  }
+  .search-btn {
+    border-radius: 0 8px 8px 0;
+    border: none;
+    background: var(--muted-mauve);
+    color: #fff;
+    font-weight: 600;
+    padding: 0.7rem 1.7rem 0.7rem 2.2rem;
+    font-size: 1.1rem;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: none;
+    outline: none;
+  }
+  .search-btn:hover {
+    background: var(--dusty-pink);
+    color: #fff;
+  }
+  .filters-bar {
+    background: var(--muted-mauve);
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #fff;
+    font-weight: 500;
+  }
+  .filters-bar label {
+    margin-right: 1rem;
+    color: var(--pale-blush);
+  }
+  .filters-bar select, .filters-bar input[type=range] {
+    border-radius: 6px;
+    border: 1px solid var(--dusty-pink);
+    padding: 0.3rem 0.7rem;
+    margin-right: 1.2rem;
+    background: var(--pale-blush);
+    color: var(--deep-mauve);
+  }
+  .dress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1.5rem;
+  }
+  .dress-card {
+    background: var(--light);
+    border-radius: 18px;
+    box-shadow: 0 2px 10px rgba(178,139,154,0.10);
+    padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: box-shadow 0.2s, transform 0.2s;
+    min-height: 340px;
+    max-width: 240px;
+    width: 240px;
+    height: 340px;
+    margin: 0 auto;
+    border: 2px solid var(--muted-mauve);
+  }
+  .dress-card:hover {
+    box-shadow: 0 8px 24px rgba(201,154,154,0.18);
+    transform: translateY(-4px) scale(1.03);
+    border-color: var(--dusty-pink);
+  }
+  .dress-img {
+    width: 170px;
+    height: 210px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 0.6rem;
+    background: var(--pale-blush);
+    border: 2px solid var(--dusty-pink);
+    display: block;
+  }
+  .dress-title {
+    font-size: 1rem;
+    margin-bottom: 0.1;
+    white-space: nowrap;
+    /* overflow: hidden; */
+    text-overflow: ellipsis;
+    width: 100%;
+    text-align: center;
+  }
+  .dress-desc {
+    font-size: 0.92rem;
+    margin-bottom: 0.15rem;
+    text-align: center;
+  }
+  .dress-price {
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+    text-align: center;
+  }
+  .btn-add {
+    font-size: 0.95rem;
+    padding: 0.3rem 0.9rem;
+  }
+  .btn-modal-action {
+    background: var(--deep-mauve);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1.2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background 0.2s;
+    margin-right: 0.5rem;
+  }
+  .btn-modal-action:hover {
+    background: var(--dusty-pink);
+    color: #fff;
+  }
+  /* Cart specific styles */
+  .cart-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--muted-mauve);
+  }
+  .cart-item img {
+    width: 80px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 1rem;
+  }
+  .cart-item-details {
+    flex: 1;
+  }
+  .cart-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .btn-qty {
+    background: var(--pale-blush);
+    border: 1px solid var(--muted-mauve);
+    border-radius: 6px;
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-qty:hover {
+    background: var(--dusty-pink);
+  }
+  .btn-delete {
+    background: none;
+    border: none;
+    color: var(--b02828);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .btn-delete:hover {
+    transform: scale(1.1);
+  }
+  /* Ads section styles */
+  #adsSection {
+    background: var(--light);
+    border-radius: 18px;
+    padding: 2rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  }
+  #adsSection h2 {
+    color: var(--deep-mauve);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  .ad-card {
+    border-radius: 18px;
+    box-shadow: 0 2px 10px rgba(201,154,154,0.10);
+    border: 2px solid var(--muted-mauve);
+    padding: 1.2rem 0.7rem;
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s;
+  }
+  .ad-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 24px rgba(201,154,154,0.18);
+  }
+  .ad-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 0.7rem;
+  }
+  .ad-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--deep-mauve);
+    margin-bottom: 0.3rem;
+  }
+  .ad-desc {
+    font-size: 0.98rem;
+    color: var(--muted-mauve);
+    margin-bottom: 0.5rem;
+  }
+  .ad-dates, .ad-segment {
+    font-size: 0.92rem;
+    color: var(--dusty-pink);
+    margin-bottom: 0.2rem;
+  }
+
+  /* Ads Banner Slide Animation */
+  .ads-banner-slide {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.7s;
+  }
+  .ads-banner-slide.active {
+    display: flex !important;
+    opacity: 1 !important;
+    z-index: 2;
+    animation: fadeInBanner 0.7s;
+  }
+  @keyframes fadeInBanner {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<div class="container my-5">
+  <form id="searchForm" class="search-bar mb-3" onsubmit="return false;">
+    <input type="text" class="search-input" id="searchText" placeholder="Search for dresses, colors, or styles...">
+    <button class="search-btn" onclick="filterDresses()" type="submit">
+      <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="#fff" stroke-width="2"/><path d="M21 21l-3.5-3.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+      Search
+    </button>
+  </form>
+  <div class="filters-bar d-flex flex-wrap align-items-center justify-content-center">
+    <label for="searchStyle">Style:</label>
+    <select id="searchStyle" class="me-2">
+      <option value="">All</option>
+      <option value="party">Party</option>
+      <option value="casual">Casual</option>
+      <option value="formal">Formal</option>
+      <option value="work">Work</option>
+      <option value="summer">Summer</option>
+      <option value="maxi">Maxi</option>
+      <option value="midi">Midi</option>
+      <option value="mini">Mini</option>
+    </select>
+    <label for="searchColor">Color:</label>
+    <select id="searchColor" class="me-2">
+      <option value="">All</option>
+      <option value="red">Red</option>
+      <option value="blue">Blue</option>
+      <option value="black">Black</option>
+      <option value="beige">Beige</option>
+      <option value="yellow">Yellow</option>
+      <option value="pink">Pink</option>
+      <option value="white">White</option>
+      <option value="green">Green</option>
+    </select>
+    <label for="searchPrice">Max Price:</label>
+    <input type="range" id="searchPrice" min="30" max="250" step="1" value="250" style="width:120px;">
+    <span id="priceValue" style="margin-left:0.5rem;color:#fff;font-weight:600;">$250</span>
+  </div>
+  <script>
+    // Update price value display
+    document.addEventListener('DOMContentLoaded', function() {
+      const priceSlider = document.getElementById('searchPrice');
+      const priceValue = document.getElementById('priceValue');
+      if (priceSlider && priceValue) {
+        priceSlider.addEventListener('input', function() {
+          priceValue.textContent = `$${priceSlider.value}`;
+        });
+      }
+    });
+  </script>
+  <div class="dress-grid mt-4" id="dressContainer">
+    {% for product in products %}
+    <div class="dress-card" 
+         data-id="{{ product.id }}"
+         data-category="{{ product.category|default('') }}"
+         data-price="{{ product.price|default('') }}"
+         data-color="{{ product.color|default('') }}"
+         data-size="{{ product.size|default('') }}">
+      <img src="{{ product.image if product.image else url_for('static', filename='default.jpg') }}" class="dress-img" alt="{{ product.title }}">
+      <div class="dress-title">{{ product.title }}</div>
+      <div class="dress-desc">{{ product.description }}</div>
+      <div class="dress-price">${{ product.price }}</div>
+      <button class="btn-add">Add to Cart</button>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Ads Section: Floating/Transitioning Banners at Bottom -->
+  {% if ads and ads|length > 0 %}
+  <!-- Inline Ad Banner Carousel (Bootstrap) -->
+  <div id="adsBannerSection" style="width:100%;display:flex;justify-content:center;margin:3.5rem 0 2.5rem 0;">
+    <div id="adsBannerCarousel" class="carousel slide"
+         data-bs-ride="carousel"
+         style="width:1300px;max-width:99vw;min-width:340px;box-shadow:0 6px 32px rgba(201,154,154,0.18);border-radius:28px;">
+      <div class="carousel-inner">
+        {% for ad in ads %}
+        <div class="carousel-item{% if loop.first %} active{% endif %}">
+          <div style="background:rgba(255,255,255,0.97);border-radius:28px;padding:2.5rem 3rem;display:flex;align-items:center;gap:2.5rem;min-height:320px;">
+            <img src="{{ ad.image }}" alt="{{ ad.title }}"
+                 style="width:200px;height:260px;object-fit:cover;border-radius:16px;border:2.5px solid #B28B9A;">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+              <div style="font-size:1.7rem;font-weight:700;color:#6D4250;margin-bottom:0.4rem;">{{ ad.title }}</div>
+              <div style="font-size:1.18rem;color:#B28B9A;margin-bottom:0.7rem;">{{ ad.description }}</div>
+              {% if ad.start_date and ad.end_date %}
+              <div style="font-size:1.08rem;color:#C99A9A;margin-bottom:0.3rem;">Active: {{ ad.start_date }} to {{ ad.end_date }}</div>
+              {% endif %}
+              {% if ad.target_segment is not none %}
+              <div style="font-size:1.08rem;color:#B28B9A;">Target Segment: {{ ad.target_segment }}</div>
+              {% endif %}
+              <span style="display:inline-block;margin-top:1.1rem;padding:0.6rem 1.8rem;background:linear-gradient(90deg,#C99A9A,#B28B9A);color:#fff;border-radius:12px;font-weight:700;font-size:1.18rem;box-shadow:0 2px 12px rgba(201,154,154,0.10);">Sponsored</span>
+              <!-- Additional content for richer banner -->
+              <div style="margin-top:1.2rem;">
+                <ul style="padding-left:1.2rem;margin-bottom:0.7rem;">
+                  <li style="color:#6D4250;font-size:1.05rem;">Limited time offer: <b>Save up to 30%</b> on select styles!</li>
+                  <li style="color:#B28B9A;font-size:1.02rem;">Free shipping on orders over $100</li>
+                  <li style="color:#C99A9A;font-size:1.02rem;">Use code <b>SUMMER25</b> at checkout</li>
+                </ul>
+                <a href="/shop" class="btn btn-primary" style="background:#B28B9A;border:none;padding:0.7rem 2rem;font-size:1.1rem;border-radius:8px;font-weight:600;">Shop Now</a>
+              </div>
+              <div style="margin-top:0.9rem;display:flex;align-items:center;gap:1.2rem;">
+                <span style="font-size:0.98rem;color:#6D4250;">Hurry, offer ends soon!</span>
+                <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#E9D3D0"/><path d="M12 7v5l4 2" stroke="#B28B9A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#adsBannerCarousel" data-bs-slide="prev" style="filter:none;">
+        <span class="carousel-control-prev-icon" aria-hidden="true" style="background-color:#B28B9A;border-radius:50%;"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#adsBannerCarousel" data-bs-slide="next" style="filter:none;">
+        <span class="carousel-control-next-icon" aria-hidden="true" style="background-color:#B28B9A;border-radius:50%;"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Login/Register Prompt Modal -->
+<div class="modal fade" id="loginPromptModal" tabindex="-1" aria-labelledby="loginPromptLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title d-flex align-items-center" id="loginPromptLabel"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="loginPromptBody"></div>
+      <div class="modal-footer" id="loginPromptFooter"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Product Detail Modal (Bootstrap) -->
+<div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="productDetailModalLabel"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <img id="modalProductImg" src="" alt="" style="width:100%;max-width:260px;display:block;margin:0 auto 1rem auto;border-radius:12px;">
+        <div id="modalProductDesc" style="margin-bottom:0.7rem;"></div>
+        <div id="modalProductPrice" style="font-weight:600;margin-bottom:1.1rem;"></div>
+        <!-- Rating stars -->
+        <div id="modalRatingSection" style="margin-bottom:1.2rem;text-align:center;">
+          <span style="font-weight:500;">Rate this product:</span>
+          <span id="modalRatingStars" style="font-size:1.5rem;cursor:pointer;color:#C99A9A;"></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-modal-action" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const isLoggedIn = "{{ 'true' if session.get('username') else 'false' }}" === 'true';
+
+  function handleAddToCart(e) {
+    console.log('Add to Cart clicked, isLoggedIn:', isLoggedIn);
+    if (!isLoggedIn) {
+      showLoginPrompt();
+      return;
+    }
+    // Get dress info from the clicked card
+    const card = e.target.closest('.dress-card');
+    const item = {
+      title: card.querySelector('.dress-title').textContent,
+      price: card.querySelector('.dress-price').textContent,
+      image: card.querySelector('.dress-img') ? card.querySelector('.dress-img').getAttribute('src') : '',
+      desc: card.querySelector('.dress-desc') ? card.querySelector('.dress-desc').textContent : '',
+      category: card.getAttribute('data-category'),
+      color: card.getAttribute('data-color'),
+      size: card.getAttribute('data-size')
+    };
+    // Send to backend via fetch
+    fetch('/add_to_cart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(item)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        document.getElementById('cart-count-navbar').innerText = data.cart_count;
+        showCartToast(item.title);
+        // Track add to cart event
+        fetch('/track_add_to_cart', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: item.title })
+        });
+      } else {
+        showCartToast('Error adding to cart.');
+      }
+    });
+  }
+
+  // Track product view when a dress card is clicked (example: on modal open or detail view)
+  function trackProductView(title) {
+    if (!isLoggedIn) return;
+    fetch('/track_view', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title })
+    });
+  }
+
+  // Track time spent on a product (call this when user leaves product detail/modal)
+  function trackTimeSpent(title, timeSpentSeconds) {
+    if (!isLoggedIn) return;
+    fetch('/track_time', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, time_spent: timeSpentSeconds })
+    });
+  }
+
+  // Track rating (call this when user submits a rating)
+  function trackRating(title, rating) {
+    if (!isLoggedIn) return;
+    fetch('/track_rating', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, rating })
+    });
+  }
+
+  // Track purchase (call this after successful purchase)
+  function trackPurchase(title) {
+    if (!isLoggedIn) return;
+    fetch('/track_purchase', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title })
+    });
+  }
+
+  function updateCartCount() {
+    fetch('/get_cart')
+      .then(response => response.json())
+      .then(data => {
+        let cartCount = 0;
+        if (Array.isArray(data)) {
+          cartCount = data.reduce((sum, item) => sum + (item.quantity || 1), 0);
+        }
+        document.getElementById('cart-count-navbar').innerText = cartCount;
+      });
+  }
+
+  // Optional: update on page load
+  document.addEventListener('DOMContentLoaded', updateCartCount);
+
+  function showCartToast(itemName) {
+    // Custom white box with green checkmark in the center
+    const toast = document.createElement('div');
+    toast.style.position = 'fixed';
+    toast.style.top = '50%';
+    toast.style.left = '50%';
+    toast.style.transform = 'translate(-50%, -50%)';
+    toast.style.background = '#fff';
+    toast.style.color = '#333';
+    toast.style.padding = '1.5rem 2.5rem';
+    toast.style.borderRadius = '16px';
+    toast.style.fontWeight = '600';
+    toast.style.fontSize = '1.2rem';
+    toast.style.boxShadow = '0 4px 24px rgba(109,66,80,0.18)';
+    toast.style.zIndex = 99999;
+    toast.style.display = 'flex';
+    toast.style.alignItems = 'center';
+    toast.style.gap = '1rem';
+    toast.innerHTML = `
+      <svg xmlns='http://www.w3.org/2000/svg' width='2em' height='2em' fill='#28a745' viewBox='0 0 16 16'><circle cx='8' cy='8' r='8' fill='#eafbe7'/><path d='M12.03 5.97a.75.75 0 0 1 0 1.06l-3.5 3.5a.75.75 0 0 1-1.06 0l-1.5-1.5a.75.75 0 1 1 1.06-1.06l.97.97 2.97-2.97a.75.75 0 0 1 1.06 0z' fill='#28a745'/></svg>
+      <span>Item has been added to cart</span>
+    `;
+    // Add a close button
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = 'OK';
+    closeBtn.style.background = '#28a745';
+    closeBtn.style.color = '#fff';
+    closeBtn.style.border = 'none';
+    closeBtn.style.borderRadius = '6px';
+    closeBtn.style.padding = '0.5rem 1.5rem';
+    closeBtn.style.fontWeight = '600';
+    closeBtn.style.fontSize = '1rem';
+    closeBtn.style.marginLeft = '1.2rem';
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.addEventListener('click', () => toast.remove());
+    toast.appendChild(closeBtn);
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      if (document.body.contains(toast)) toast.remove();
+    }, 2000);
+  }
+
+  function showLoginPrompt() {
+    const modalBody = document.getElementById('loginPromptBody');
+    const modalFooter = document.getElementById('loginPromptFooter');
+    const modalLabel = document.getElementById('loginPromptLabel');
+    modalLabel.innerHTML = `<span style="color:#b02828;font-size:1.5rem;margin-right:0.5rem;vertical-align:middle;">
+      <svg xmlns='http://www.w3.org/2000/svg' width='1.5em' height='1.5em' fill='currentColor' viewBox='0 0 16 16' style='vertical-align:middle;'><path d='M8.982 1.566a1.13 1.13 0 0 0-1.964 0L.165 13.233c-.457.778.091 1.767.982 1.767h13.707c.89 0 1.438-.99.982-1.767L8.982 1.566zm-1.196.447a.13.13 0 0 1 .228 0l6.853 11.667a.13.13 0 0 1-.114.194H1.147a.13.13 0 0 1-.114-.194L7.886 2.013zM8 5c-.535 0-.954.462-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 5zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z'/></svg>
+      </span>Action Required`;
+    modalBody.innerHTML = `You are new here, please register or login to add items to your cart.`;
+    modalFooter.innerHTML = `
+      <a href="{{ url_for('login') }}" class="btn btn-modal-action me-2" style="background:#6D4250;color:#fff;">Login</a>
+      <a href="{{ url_for('register') }}" class="btn btn-modal-action" style="background:#B28B9A;color:#fff;">Register</a>
+    `;
+    var modal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
+    modal.show();
+  }
+
+  // --- Product Detail Modal Logic ---
+  let currentModalProductTitle = null;
+  let productModal = null;
+
+  function openProductModal(product) {
+    // Set modal content
+    document.getElementById('productDetailModalLabel').textContent = product.title;
+    document.getElementById('modalProductImg').src = product.image;
+    document.getElementById('modalProductImg').alt = product.title;
+    document.getElementById('modalProductDesc').textContent = product.desc;
+    document.getElementById('modalProductPrice').textContent = product.price;
+    // Setup rating stars
+    setupModalRating(product.title);
+    // Show modal
+    if (!productModal) {
+      productModal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+    }
+    productModal.show();
+    currentModalProductTitle = product.title;
+    onProductModalOpen(product.title);
+  }
+
+  function closeProductModal() {
+    if (currentModalProductTitle) {
+      onProductModalClose(currentModalProductTitle);
+      currentModalProductTitle = null;
+    }
+  }
+
+  // Setup rating stars in modal
+  function setupModalRating(productTitle) {
+    const starsContainer = document.getElementById('modalRatingStars');
+    starsContainer.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      const star = document.createElement('span');
+      star.innerHTML = '&#9733;'; // Unicode star
+      star.dataset.value = i;
+      star.style.margin = '0 2px';
+      star.addEventListener('mouseenter', function() {
+        highlightStars(i);
+      });
+      star.addEventListener('mouseleave', function() {
+        highlightStars(0);
+      });
+      star.addEventListener('click', function() {
+        onProductRated(productTitle, i);
+        highlightStars(i);
+      });
+      starsContainer.appendChild(star);
+    }
+    function highlightStars(rating) {
+      Array.from(starsContainer.children).forEach((star, idx) => {
+        star.style.color = idx < rating ? '#B28B9A' : '#C99A9A';
+      });
+    }
+  }
+
+  // Attach click listeners to all dress cards to open modal
+  function getDressCardData(card) {
+    return {
+      title: card.querySelector('.dress-title').textContent,
+      price: card.querySelector('.dress-price').textContent,
+      image: card.querySelector('.dress-img') ? card.querySelector('.dress-img').getAttribute('src') : '',
+      desc: card.querySelector('.dress-desc') ? card.querySelector('.dress-desc').textContent : ''
+    };
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    // Attach click listeners to all dress cards to redirect to product page (but NOT for add-to-cart button)
+    document.querySelectorAll('.dress-card').forEach(card => {
+      card.addEventListener('click', function(e) {
+        if (e.target.classList.contains('btn-add')) return; // Don't redirect on add-to-cart
+        // Get product id from card (must be set by backend)
+        let productId = card.getAttribute('data-id');
+        if (productId) {
+          window.location.href = '/product/' + productId;
+        } else {
+          alert('Product ID not found.');
+        }
+      });
+    });
+    // Attach add-to-cart handler to all add-to-cart buttons
+    document.querySelectorAll('.btn-add').forEach(btn => {
+      btn.addEventListener('click', handleAddToCart);
+    });
+  });
+
+  // Filter logic
+  const categoryFilter = document.getElementById('categoryFilter');
+  const priceFilter = document.getElementById('priceFilter');
+  const colorFilter = document.getElementById('colorFilter');
+  const sizeFilter = document.getElementById('sizeFilter');
+  const searchInput = document.getElementById('searchInput');
+  const dressCards = document.querySelectorAll('.dress-card');
+
+  function applyFilters() {
+    const selectedCategory = categoryFilter.value;
+    const selectedPrice = priceFilter.value;
+    const selectedColor = colorFilter.value;
+    const selectedSize = sizeFilter.value;
+    const searchTerm = searchInput.value.trim().toLowerCase();
+
+    dressCards.forEach(card => {
+      const cardCategory = card.getAttribute('data-category');
+      const cardPrice = parseFloat(card.getAttribute('data-price'));
+      const cardColor = card.getAttribute('data-color');
+      const cardSize = card.getAttribute('data-size');
+      const cardTitle = card.querySelector('.dress-title').textContent.toLowerCase();
+      const cardDesc = card.querySelector('.dress-desc').textContent.toLowerCase();
+      let show = true;
+
+      if (selectedCategory !== 'all' && selectedCategory !== cardCategory) show = false;
+      if (selectedPrice !== 'all') {
+        const [min, max] = selectedPrice.split('-').map(Number);
+        if (cardPrice < min || cardPrice > max) show = false;
+      }
+      if (selectedColor !== 'all' && selectedColor !== cardColor) show = false;
+      if (selectedSize !== 'all' && selectedSize !== cardSize) show = false;
+      if (searchTerm && !cardTitle.includes(searchTerm) && !cardDesc.includes(searchTerm)) show = false;
+
+      card.style.display = show ? 'flex' : 'none';
+    });
+  }
+  categoryFilter.addEventListener('change', applyFilters);
+  priceFilter.addEventListener('change', applyFilters);
+  colorFilter.addEventListener('change', applyFilters);
+  sizeFilter.addEventListener('change', applyFilters);
+  searchInput.addEventListener('input', applyFilters);
+
+  // --- CART PAGE LOGIC: Add + and - icons for quantity, and delete icon ---
+  if (window.location.pathname === '/cart') {
+    function updateCartDisplay(cart) {
+      const cartTable = document.getElementById('cart-table-body');
+      const cartTotal = document.getElementById('cart-total');
+      cartTable.innerHTML = '';
+      let total = 0;
+      cart.forEach((item, idx) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><img src="${item.image}" alt="${item.title}" style="width:60px;height:80px;object-fit:cover;border-radius:8px;"></td>
+          <td>${item.title}</td>
+          <td style="min-width:120px;">
+            <button class="btn-qty btn-minus" data-idx="${idx}" style="background:none;border:none;font-size:1.3rem;color:#b02828;vertical-align:middle;">
+              <svg width="22" height="22" fill="none" stroke="#b02828" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+            <span class="mx-2">${item.quantity}</span>
+            <button class="btn-qty btn-plus" data-idx="${idx}" style="background:none;border:none;font-size:1.3rem;color:#28a745;vertical-align:middle;">
+              <svg width="22" height="22" fill="none" stroke="#28a745" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+          </td>
+          <td>$${(item.price * item.quantity).toFixed(2)}</td>
+          <td>
+            <button class="btn-delete" data-idx="${idx}" style="background:none;border:none;font-size:1.3rem;color:#b02828;vertical-align:middle;">
+              <svg width="22" height="22" fill="none" stroke="#b02828" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </td>
+        `;
+        cartTable.appendChild(row);
+        total += item.price * item.quantity;
+      });
+      cartTotal.innerText = `$${total.toFixed(2)}`;
+    }
+
+    function fetchCartAndRender() {
+      fetch('/get_cart')
+        .then(res => res.json())
+        .then(cart => updateCartDisplay(cart));
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchCartAndRender();
+      // Delegate click events for +, -, and delete
+      document.getElementById('cart-table-body').addEventListener('click', function(e) {
+        if (e.target.closest('.btn-plus')) {
+          const idx = e.target.closest('.btn-plus').getAttribute('data-idx');
+          fetch('/update_cart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idx: parseInt(idx), action: 'increment' })
+          }).then(() => fetchCartAndRender());
+        }
+        if (e.target.closest('.btn-minus')) {
+          const idx = e.target.closest('.btn-minus').getAttribute('data-idx');
+          fetch('/update_cart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idx: parseInt(idx), action: 'decrement' })
+          }).then(() => fetchCartAndRender());
+        }
+        if (e.target.closest('.btn-delete')) {
+          const idx = e.target.closest('.btn-delete').getAttribute('data-idx');
+          fetch('/remove_from_cart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idx: parseInt(idx) })
+          }).then(() => fetchCartAndRender());
+        }
+      });
+    });
+  }
+
+  function filterDresses() {
+    const text = document.getElementById('searchText').value.toLowerCase();
+    const color = document.getElementById('searchColor').value;
+    const style = document.getElementById('searchStyle').value;
+    const price = parseFloat(document.getElementById('searchPrice').value);
+    const cards = document.querySelectorAll('.dress-card');
+    cards.forEach(card => {
+      const cardTitle = card.querySelector('.dress-title').textContent.toLowerCase();
+      const cardDesc = card.querySelector('.dress-desc').textContent.toLowerCase();
+      const cardColor = card.getAttribute('data-color');
+      const cardStyle = card.getAttribute('data-category');
+      const cardPrice = parseFloat(card.getAttribute('data-price'));
+      let show = true;
+      if (text && !(cardTitle.includes(text) || cardDesc.includes(text))) show = false;
+      if (color && cardColor !== color) show = false;
+      if (style && cardStyle !== style) show = false;
+      if (!isNaN(price) && cardPrice > price) show = false;
+      card.style.display = show ? '' : 'none';
+    });
+  }
+  document.getElementById('searchForm').addEventListener('submit', filterDresses);
+
+  // Ads Banner Carousel Logic
+  (function() {
+    const slides = document.querySelectorAll('.ads-banner-slide');
+    let current = 0;
+    if (slides.length > 0) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === 0);
+      });
+      let timer = null;
+      function showSlide(idx) {
+        slides.forEach((slide, i) => {
+          slide.classList.toggle('active', i === idx);
+        });
+        current = idx;
+      }
+      function nextSlide() {
+        showSlide((current + 1) % slides.length);
+      }
+      function prevSlide() {
+        showSlide((current - 1 + slides.length) % slides.length);
+      }
+      document.getElementById('adsNextBtn').onclick = function() {
+        nextSlide();
+        resetTimer();
+      };
+      document.getElementById('adsPrevBtn').onclick = function() {
+        prevSlide();
+        resetTimer();
+      };
+      function resetTimer() {
+        if (timer) clearInterval(timer);
+        timer = setInterval(nextSlide, 5000);
+      }
+      resetTimer();
+    }
+  })();
+
+  // Example: Track product view when a product modal opens
+  function onProductModalOpen(productTitle) {
+      trackProductView(productTitle);
+      window.productViewStartTime = Date.now();
+  }
+
+  // Example: Track time spent when a product modal closes
+  function onProductModalClose(productTitle) {
+      if (window.productViewStartTime) {
+          const timeSpent = Math.round((Date.now() - window.productViewStartTime) / 1000); // seconds
+          trackTimeSpent(productTitle, timeSpent);
+          window.productViewStartTime = null;
+      }
+  }
+
+  // Example: Track rating when user submits a rating
+  function onProductRated(productTitle, rating) {
+      trackProductRating(productTitle, rating);
+  }
+
+  // Attach these handlers to your UI logic:
+  // - Call onProductModalOpen(title) when a product modal/dialog opens
+  // - Call onProductModalClose(title) when it closes
+  // - Call onProductRated(title, rating) when a user submits a rating
+</script>
+{% endblock %}

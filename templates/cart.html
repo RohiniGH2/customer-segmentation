@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+{% block title %}My Cart | Dressly{% endblock %}
+{% block content %}
+<style>
+  :root {
+    --deep-mauve: #6D4250;
+    --dusty-pink: #C99A9A;
+    --pale-blush: #E9D3D0;
+    --muted-mauve: #B28B9A;
+    --dark-purple-grey: #5A5066;
+    --light: #fff;
+  }
+  body {
+    background: linear-gradient(135deg, var(--pale-blush) 0%, var(--dusty-pink) 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  }
+  .cart-container {
+    background: var(--pale-blush);
+    border-radius: 18px;
+    box-shadow: 0 2px 16px rgba(109,66,80,0.10);
+    padding: 2.5rem 2rem 2rem 2rem;
+    max-width: 950px;
+    margin: 2.5rem auto 3rem auto;
+  }
+  .cart-title {
+    color: var(--deep-mauve);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  .cart-table {
+    width: 100%;
+    background: linear-gradient(120deg, #ffe5d0 0%, #f9d6d5 100%);
+    /* soft pinkish orange gradient */
+    border-radius: 12px;
+    box-shadow: 0 1px 8px rgba(178,139,154,0.08);
+    overflow: hidden;
+  }
+  .cart-table th, .cart-table td {
+    padding: 1rem 0.7rem;
+    text-align: center;
+    color: var(--deep-mauve);
+    vertical-align: middle;
+  }
+  .cart-table th {
+    background: var(--muted-mauve);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.1rem;
+    white-space: nowrap;
+  }
+  .cart-table td {
+    background: transparent;
+    font-size: 1.05rem;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .cart-img {
+    width: 60px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid var(--dusty-pink);
+  }
+  .cart-action-btn {
+    background: var(--pale-blush);
+    color: var(--deep-mauve);
+    border: 1.5px solid var(--muted-mauve);
+    border-radius: 6px;
+    font-size: 1.2rem;
+    min-width: 2.5rem;
+    height: 2.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0.18rem;
+    font-weight: 700;
+    box-shadow: none;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+    outline: none;
+    cursor: pointer;
+    vertical-align: middle;
+  }
+  .cart-action-btn svg {
+    width: 1.3em;
+    height: 1.3em;
+    display: block;
+    pointer-events: none;
+  }
+  .cart-action-btn.plus {
+    background: var(--muted-mauve);
+    color: #fff;
+    border-color: var(--muted-mauve);
+  }
+  .cart-action-btn.plus:hover {
+    background: var(--deep-mauve);
+    color: #fff;
+    border-color: var(--deep-mauve);
+  }
+  .cart-action-btn.minus {
+    background: var(--dusty-pink);
+    color: #fff;
+    border-color: var(--dusty-pink);
+  }
+  .cart-action-btn.minus:hover {
+    background: var(--deep-mauve);
+    color: #fff;
+    border-color: var(--deep-mauve);
+  }
+  .cart-action-btn.clear {
+    background: #fff;
+    color: var(--deep-mauve);
+    border-color: var(--deep-mauve);
+    padding: 0;
+  }
+  .cart-action-btn.clear:hover {
+    background: var(--deep-mauve);
+    color: #fff;
+    border-color: var(--deep-mauve);
+  }
+  .cart-table td > .cart-action-btn,
+  .cart-table td > span[id^="qty-"] {
+    vertical-align: middle;
+  }
+  .cart-total-row td {
+    font-weight: 700;
+    font-size: 1.15rem;
+    background: var(--pale-blush);
+    color: var(--deep-mauve);
+    border-top: 2px solid var(--muted-mauve);
+  }
+  .empty-cart {
+    text-align: center;
+    color: var(--muted-mauve);
+    font-size: 1.2rem;
+    margin-top: 2rem;
+  }
+  .checkout-btn {
+    background: var(--deep-mauve);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 300px;
+  }
+  .checkout-btn:hover {
+    background: var(--dark-purple-grey);
+  }
+  .checkout-section {
+    text-align: center;
+    margin-top: 2rem;
+  }
+</style>
+<div class="cart-container">
+  <div class="cart-title">My Shopping Cart</div>
+  <div id="cartTableWrapper"></div>
+  <div class="checkout-section">
+    <!-- Checkout Form -->
+    <form id="checkoutForm" style="display: none;">
+      <div class="checkout-form-container">
+        <h3>Payment Details</h3>
+        <div class="form-group">
+          <label for="cardName">Name on Card</label>
+          <input type="text" id="cardName" required placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label for="cardNumber">Card Number</label>
+          <input type="text" id="cardNumber" required placeholder="Enter any card number">
+        </div>
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="expiry">Expiry Date</label>
+            <input type="text" id="expiry" required placeholder="Any date format">
+          </div>
+          <div class="form-group half">
+            <label for="cvv">CVV</label>
+            <input type="text" id="cvv" required placeholder="Any CVV">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="address">Shipping Address</label>
+          <textarea id="address" required placeholder="Enter your full shipping address"></textarea>
+        </div>
+        <button type="submit" class="checkout-btn">Complete Payment</button>
+        <button type="button" class="cancel-btn" onclick="toggleCheckoutForm(false)">Cancel</button>
+      </div>
+    </form>
+    <button id="checkoutBtn" class="checkout-btn" onclick="toggleCheckoutForm(true)">Proceed to Checkout</button>
+  </div>
+</div>
+
+<style>
+  .checkout-form-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--deep-mauve);
+    font-weight: 600;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--pale-blush);
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .form-group.half {
+    flex: 1;
+  }
+  
+  .cancel-btn {
+    background: var(--pale-blush);
+    color: var(--deep-mauve);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+  }
+  
+  #checkoutForm h3 {
+    color: var(--deep-mauve);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+</style>
+
+<script>
+function renderCartTable(cart) {
+  if (!cart || cart.length === 0) {
+    document.getElementById('cartTableWrapper').innerHTML = '<div class="empty-cart">Your cart is empty.</div>';
+    return;
+  }
+  let total = 0;
+  let table = `<table class="cart-table">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>`;
+  cart.forEach((item, idx) => {
+    let price = parseFloat((item.price || '').toString().replace(/[^\d.]/g, '')) || 0;
+    let quantity = item.quantity || item.qty || 1;
+    total += price * quantity;
+    table += `<tr>
+      <td><img src="${item.image}" class="cart-img" alt="${item.title}"></td>
+      <td style="max-width:320px;">${item.title}</td>
+      <td style="min-width:60px;text-align:center;">
+        <span id="qty-${idx}" style="display:inline-block;min-width:2.2rem;text-align:center;">${quantity}</span>
+      </td>
+      <td>$${(price * quantity).toFixed(2)}</td>
+      <td><button class="cart-action-btn plus" onclick="updateQty(${idx}, 1)" title="Add" aria-label="Increase quantity"><svg viewBox="0 0 20 20" fill="none"><rect x="9" y="4" width="2" height="12" rx="1" fill="currentColor"/><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg></button></td>
+      <td><button class="cart-action-btn minus" onclick="updateQty(${idx}, -1)" title="Remove" aria-label="Decrease quantity"><svg viewBox="0 0 20 20" fill="none"><rect x="4" y="9" width="12" height="2" rx="1" fill="currentColor"/></svg></button></td>
+      <td><button class="cart-action-btn clear" onclick="clearItem(${idx})" title="Delete" aria-label="Remove item"><svg viewBox="0 0 20 20" fill="none"><rect x="5.5" y="7.5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 10v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 10v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><rect x="8" y="4" width="4" height="2" rx="1" fill="currentColor"/></svg></button></td>
+    </tr>`;
+  });
+  table += `</tbody>
+    <tfoot>
+      <tr class="cart-total-row">
+        <td colspan="3">Total</td>
+        <td colspan="4">$${total.toFixed(2)}</td>
+      </tr>
+    </tfoot>
+  </table>`;
+  document.getElementById('cartTableWrapper').innerHTML = table;
+}
+
+function fetchCart() {
+  fetch('/get_cart')
+    .then(res => res.json())
+    .then(cart => {
+      // Always use 'quantity' property
+      cart.forEach(item => { if (!item.quantity) item.quantity = item.qty || 1; });
+      renderCartTable(cart);
+      window._cart = cart;
+    });
+}
+
+function updateQty(idx, delta) {
+  let action = delta > 0 ? 'increment' : 'decrement';
+  fetch('/update_cart', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idx, action })
+  })
+  .then(() => fetchCart());
+}
+
+function clearItem(idx) {
+  fetch('/remove_from_cart', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idx })
+  })
+  .then(() => fetchCart());
+}
+
+function removeFromCart(idx) {
+  fetch('/remove_from_cart', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idx })
+  })
+  .then(() => fetchCart());
+}
+
+document.addEventListener('DOMContentLoaded', fetchCart);
+
+function toggleCheckoutForm(show) {
+  const checkoutForm = document.getElementById('checkoutForm');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  
+  if (show && (!window._cart || window._cart.length === 0)) {
+    alert('Your cart is empty!');
+    return;
+  }
+  
+  checkoutForm.style.display = show ? 'block' : 'none';
+  checkoutBtn.style.display = show ? 'none' : 'block';
+}
+
+// Demo mode - no input formatting required
+// Just keep the fields as they are typed
+
+// Handle form submission
+document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const formData = {
+    cardName: document.getElementById('cardName').value,
+    cardNumber: document.getElementById('cardNumber').value.replace(/\s/g, ''),
+    expiry: document.getElementById('expiry').value,
+    cvv: document.getElementById('cvv').value,
+    address: document.getElementById('address').value,
+    items: window._cart
+  };
+
+  // Demo mode - no strict validation required
+  if (!formData.cardName || !formData.cardNumber || !formData.expiry || !formData.cvv || !formData.address) {
+    alert('Please fill in all fields');
+    return;
+  }
+
+  fetch('/checkout', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      window.location.href = '/checkout_success';
+    } else {
+      alert(data.error || 'Something went wrong. Please try again.');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('An error occurred. Please try again.');
+  });
+});
+</script>
+{% endblock %}
+

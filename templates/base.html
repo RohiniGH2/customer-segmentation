@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Dressly{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#">Dressly</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{{ url_for('about') }}">About Us</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{{ url_for('services') }}">Services</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{{ url_for('contact') }}">Contact Us</a></li>
+        </ul>
+        <ul class="navbar-nav align-items-center">
+          <li class="nav-item me-3">
+            <a class="nav-link position-relative" href="{{ url_for('cart') }}" id="cart-navbar-link">
+              <i class="bi bi-cart3" style="font-size: 1.5rem;"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count-navbar" style="font-size:0.8rem;">
+                0
+              </span>
+            </a>
+          </li>
+          <li class="nav-item"><a class="nav-link active" href="{{ url_for('register') }}">Register</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{{ url_for('login') }}">Login</a></li>
+          {% if session.get('username') %}
+          <li class="nav-item">
+            <span class="nav-link" style="color:#fff;font-weight:700;">Welcome, {{ session.get('username') }}!</span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('logout') }}">Logout</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <style>
+    footer {
+      background: #343a40;
+      color: #ccc;
+      padding-top: 40px;
+    }
+    footer a {
+      color: #ccc;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+    footer .social-icons a {
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      color: #ccc;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+    footer .social-icons a i {
+      font-size: 1.1rem;
+      margin-right: 8px;
+    }
+    footer .social-icons a:hover {
+      color: #fff;
+      transform: translateX(5px);
+    }
+    footer hr {
+      border-top: 1px solid #555;
+    }
+
+    .navbar-dark.bg-dark {
+      background-color: #000 !important;
+    }
+  </style>
+
+  <!-- Dynamic Page Content -->
+  {% block content %}
+  {% endblock %}
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row text-center text-md-start">
+        <!-- About -->
+        <div class="col-md-3 mb-4">
+          <h5>About Dressly</h5>
+          <p>Your go-to destination for trendy, affordable, and elegant fashion. Explore your style with Dressly.</p>
+        </div>
+        <!-- Quick Links -->
+        <div class="col-md-3 mb-4">
+          <h5>Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('services') }}">Services</a></li>
+            <li><a href="{{ url_for('contact') }}">Contact</a></li>
+          </ul>
+        </div>
+        <!-- Contact Us -->
+        <div class="col-md-3 mb-4">
+          <h5>Contact Us</h5>
+          <p>Email: support@dressly.com</p>
+          <p>Phone: +1 (555) 987-6543</p>
+          <p>Address: 456 Fashion Ave,<br> Style City, SC 56789</p>
+        </div>
+        <!-- Social Media -->
+        <div class="col-md-3 mb-4">
+          <h5>Follow Us</h5>
+          <hr class="w-25 mb-3" style="height: 2px; background: linear-gradient(to right, #ccc, transparent); border: none; opacity: 0.8;">
+          <div class="social-icons">
+            <a href="#"><i class="bi bi-facebook"></i> Facebook</a><br>
+            <a href="#"><i class="bi bi-twitter"></i> Twitter</a><br>
+            <a href="#"><i class="bi bi-linkedin"></i> LinkedIn</a><br>
+            <a href="#"><i class="bi bi-instagram"></i> Instagram</a>
+          </div>
+        </div>
+      </div>
+      <hr style="height: 2px; background: linear-gradient(to right, #ccc, #555, #ccc); border: none; opacity: 0.8; margin: 30px 0;">
+      <div class="text-center pb-3">
+        <p>&copy; 2025 Dressly. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+// Single correct updateCartCount function: sums all item quantities
+function updateCartCount() {
+  fetch('/get_cart')
+    .then(response => response.json())
+    .then(data => {
+      let cartCount = 0;
+      if (Array.isArray(data)) {
+        cartCount = data.reduce((sum, item) => sum + (item.quantity || 1), 0);
+      }
+      document.getElementById('cart-count-navbar').innerText = cartCount;
+    })
+    .catch(err => console.error("Cart fetch failed", err));
+}4
+
+// Update cart count on page load
+document.addEventListener('DOMContentLoaded', updateCartCount);
+</script>
+
+</body>
+</html>
