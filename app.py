@@ -25,56 +25,27 @@ def init_db():
         username TEXT UNIQUE NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
-        role TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        shipping_address TEXT,
-        zip_code TEXT
+        role TEXT NOT NULL DEFAULT 'user',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )''')
     
     # Create products table
     cursor.execute('''CREATE TABLE IF NOT EXISTS products (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        description TEXT,
         price REAL NOT NULL,
-        category TEXT,
         image_url TEXT,
-        stock_quantity INTEGER DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        category TEXT DEFAULT 'dress'
     )''')
     
-    # Create ads table
+    # Create ads table  
     cursor.execute('''CREATE TABLE IF NOT EXISTS ads (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
         content TEXT,
         image_url TEXT,
-        target_audience TEXT,
-        is_active INTEGER DEFAULT 1,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        is_active INTEGER DEFAULT 1
     )''')
-    
-    # Add sample products if none exist
-    cursor.execute("SELECT COUNT(*) FROM products")
-    if cursor.fetchone()[0] == 0:
-        sample_products = [
-            ('Summer Beige Dress', 'Elegant beige midi dress perfect for summer occasions', 45.99, 'casual', '/static/beige.jpg', 10),
-            ('Black Evening Dress', 'Sophisticated black dress for evening events', 89.99, 'formal', '/static/black.jpg', 8),
-            ('Blue Party Dress', 'Vibrant blue dress perfect for parties', 65.99, 'party', '/static/blueparty.jpg', 12),
-            ('Floral Summer Dress', 'Beautiful floral pattern for spring/summer', 39.99, 'casual', '/static/floral.jpg', 15),
-            ('Pink Maxi Dress', 'Flowing pink maxi dress for casual wear', 55.99, 'casual', '/static/pinkmaxi.jpg', 9),
-            ('White Casual Dress', 'Clean white dress for everyday wear', 42.99, 'casual', '/static/whitecasual.jpg', 14)
-        ]
-        cursor.executemany('INSERT INTO products (name, description, price, category, image_url, stock_quantity) VALUES (?, ?, ?, ?, ?, ?)', sample_products)
-    
-    # Add sample ads if none exist
-    cursor.execute("SELECT COUNT(*) FROM ads")
-    if cursor.fetchone()[0] == 0:
-        sample_ads = [
-            ('New Summer Collection', 'Discover our latest summer styles!', '/static/latest.jpg', 'all', 1),
-            ('Style Analytics', 'Find your perfect style with our recommendations', '/static/styleanalytics.jpg', 'all', 1)
-        ]
-        cursor.executemany('INSERT INTO ads (title, content, image_url, target_audience, is_active) VALUES (?, ?, ?, ?, ?)', sample_ads)
     
     conn.commit()
     cursor.close()
@@ -196,6 +167,40 @@ def service():
 @app.route('/cart')
 def cart():
     return render_template('cart.html')
+
+@app.route('/populate')
+def populate_sample_data():
+    """Populate sample data - call this once after deployment"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Add sample products
+    sample_products = [
+        ('Summer Beige Dress', 45.99, '/static/beige.jpg'),
+        ('Black Evening Dress', 89.99, '/static/black.jpg'),
+        ('Blue Party Dress', 65.99, '/static/blueparty.jpg'),
+        ('Floral Summer Dress', 39.99, '/static/floral.jpg'),
+        ('Pink Maxi Dress', 55.99, '/static/pinkmaxi.jpg'),
+        ('White Casual Dress', 42.99, '/static/whitecasual.jpg')
+    ]
+    
+    try:
+        cursor.executemany('INSERT OR IGNORE INTO products (name, price, image_url) VALUES (?, ?, ?)', sample_products)
+        
+        # Add sample ads
+        sample_ads = [
+            ('New Collection', 'Latest styles available!', '/static/latest.jpg'),
+            ('Style Analytics', 'Find your perfect style', '/static/styleanalytics.jpg')
+        ]
+        cursor.executemany('INSERT OR IGNORE INTO ads (title, content, image_url) VALUES (?, ?, ?)', sample_ads)
+        
+        conn.commit()
+        return "Sample data populated successfully!"
+    except Exception as e:
+        return f"Error: {str(e)}"
+    finally:
+        cursor.close()
+        conn.close()
 
 # Initialize database when app starts
 init_db()
