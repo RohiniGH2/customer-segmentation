@@ -1,7 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, session, request, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-import psycopg2
-import psycopg2.extras
+import sqlite3
 from datetime import datetime
 from flask import jsonify
 import csv
@@ -14,13 +13,8 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'fallback_secret_key_for_development')
 
 def get_db_connection():
-    conn = psycopg2.connect(
-        host=os.environ.get('DB_HOST', 'localhost'),
-        user=os.environ.get('DB_USER', 'postgres'),
-        password=os.environ.get('DB_PASSWORD', ''),
-        database=os.environ.get('DB_NAME', 'dressly_db'),
-        port=int(os.environ.get('DB_PORT', 5432))
-    )
+    conn = sqlite3.connect('users.db')
+    conn.row_factory = sqlite3.Row
     return conn
 
 def init_db():
@@ -29,74 +23,74 @@ def init_db():
     
     # Create users table with created_at field
     cursor.execute('''CREATE TABLE IF NOT EXISTS dressly_users (
-        id SERIAL PRIMARY KEY,
-        username VARCHAR(100) UNIQUE NOT NULL,
-        email VARCHAR(100) UNIQUE NOT NULL,
-        password_hash VARCHAR(255) NOT NULL,
-        role VARCHAR(20) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        role TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         shipping_address TEXT,
-        zip_code VARCHAR(10)
+        zip_code TEXT
     )''')
     
     # Create orders table
     cursor.execute('''CREATE TABLE IF NOT EXISTS orders (
-        id SERIAL PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
-        total_amount DECIMAL(10,2) NOT NULL,
+        total_amount REAL NOT NULL,
         shipping_address TEXT NOT NULL,
-        status VARCHAR(20) NOT NULL,
-        created_at TIMESTAMP NOT NULL,
+        status TEXT NOT NULL,
+        created_at DATETIME NOT NULL,
         FOREIGN KEY (user_id) REFERENCES dressly_users(id)
     )''')
     
     # Create order_items table
     cursor.execute('''CREATE TABLE IF NOT EXISTS order_items (
-        id SERIAL PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         order_id INTEGER NOT NULL,
         product_id INTEGER NOT NULL,
         quantity INTEGER NOT NULL,
-        price DECIMAL(10,2) NOT NULL,
+        price REAL NOT NULL,
         FOREIGN KEY (order_id) REFERENCES orders(id),
         FOREIGN KEY (product_id) REFERENCES products(id)
     )''')
     
     # Create product_reviews table
     cursor.execute('''CREATE TABLE IF NOT EXISTS product_reviews (
-        id SERIAL PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
         product_id INTEGER NOT NULL,
         rating INTEGER NOT NULL,
         review_text TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES dressly_users(id),
         FOREIGN KEY (product_id) REFERENCES products(id)
     )''')
     
     # Create user_preferences table
     cursor.execute('''CREATE TABLE IF NOT EXISTS user_preferences (
-        id SERIAL PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
-        favorite_color VARCHAR(50),
-        preferred_style VARCHAR(50),
-        budget DECIMAL(10,2),
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        favorite_color TEXT,
+        preferred_style TEXT,
+        budget REAL,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES dressly_users(id)
     )''')
     
     # Create recently_viewed table
     cursor.execute('''CREATE TABLE IF NOT EXISTS recently_viewed (
-        id SERIAL PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
         product_id INTEGER NOT NULL,
-        viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        viewed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES dressly_users(id),
         FOREIGN KEY (product_id) REFERENCES products(id)
     )''')
     
     # Create user_feedback table
     cursor.execute('''CREATE TABLE IF NOT EXISTS user_feedback (
-        id SERIAL PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
         feedback_text TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -237,8 +231,8 @@ ensure_columns()
 def index():
     # Fetch only active ads
     conn = get_db_connection()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute("SELECT * FROM ads WHERE is_active = TRUE")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM ads WHERE is_active = 1")
     ads = cursor.fetchall()
     # Fetch all products
     cursor.execute("SELECT * FROM products")
