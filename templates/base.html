@@ -49,35 +49,53 @@
 
   <style>
     footer {
-      background: #343a40;
-      color: #ccc;
-      padding-top: 40px;
+      background: #4a5568;
+      color: #e2e8f0;
+      padding: 60px 0 40px 0;
+      margin-top: 60px;
+    }
+    footer h5 {
+      color: #f7fafc;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    footer p {
+      color: #a0aec0;
+      line-height: 1.6;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
     }
     footer a {
-      color: #ccc;
+      color: #a0aec0;
       text-decoration: none;
+      transition: color 0.3s ease;
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
     }
     footer a:hover {
-      text-decoration: underline;
+      color: #f7fafc;
     }
     footer .social-icons a {
-      font-size: 0.9rem;
-      margin-bottom: 8px;
-      color: #ccc;
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      transition: all 0.3s ease;
+      margin-bottom: 10px;
     }
     footer .social-icons a i {
-      font-size: 1.1rem;
-      margin-right: 8px;
-    }
-    footer .social-icons a:hover {
-      color: #fff;
-      transform: translateX(5px);
+      margin-right: 10px;
+      width: 20px;
     }
     footer hr {
-      border-top: 1px solid #555;
+      border-top: 1px solid #718096;
+      margin: 40px 0 30px 0;
+      opacity: 0.6;
+    }
+    footer .copyright {
+      color: #a0aec0;
+      font-size: 0.9rem;
+      text-align: center;
     }
 
     .navbar-dark.bg-dark {
@@ -92,43 +110,40 @@
   <!-- Footer -->
   <footer>
     <div class="container">
-      <div class="row text-center text-md-start">
-        <!-- About -->
-        <div class="col-md-3 mb-4">
+      <div class="row">
+        <!-- About Dressly -->
+        <div class="col-lg-3 col-md-6 mb-4">
           <h5>About Dressly</h5>
           <p>Your go-to destination for trendy, affordable, and elegant fashion. Explore your style with Dressly.</p>
         </div>
         <!-- Quick Links -->
-        <div class="col-md-3 mb-4">
+        <div class="col-lg-3 col-md-6 mb-4">
           <h5>Quick Links</h5>
-          <ul class="list-unstyled">
-            <li><a href="{{ url_for('index') }}">Home</a></li>
-            <li><a href="{{ url_for('about') }}">About</a></li>
-            <li><a href="{{ url_for('service') }}">Services</a></li>
-            <li><a href="{{ url_for('contact') }}">Contact</a></li>
-          </ul>
+          <a href="{{ url_for('index') }}">Home</a>
+          <a href="{{ url_for('about') }}">About</a>
+          <a href="{{ url_for('service') }}">Services</a>
+          <a href="{{ url_for('contact') }}">Contact</a>
         </div>
         <!-- Contact Us -->
-        <div class="col-md-3 mb-4">
+        <div class="col-lg-3 col-md-6 mb-4">
           <h5>Contact Us</h5>
           <p>Email: support@dressly.com</p>
           <p>Phone: +1 (555) 987-6543</p>
-          <p>Address: 456 Fashion Ave,<br> Style City, SC 56789</p>
+          <p>Address: 456 Fashion Ave,<br>Style City, SC 56789</p>
         </div>
-        <!-- Social Media -->
-        <div class="col-md-3 mb-4">
+        <!-- Follow Us -->
+        <div class="col-lg-3 col-md-6 mb-4">
           <h5>Follow Us</h5>
-          <hr class="w-25 mb-3" style="height: 2px; background: linear-gradient(to right, #ccc, transparent); border: none; opacity: 0.8;">
           <div class="social-icons">
-            <a href="#"><i class="bi bi-facebook"></i> Facebook</a><br>
-            <a href="#"><i class="bi bi-twitter"></i> Twitter</a><br>
-            <a href="#"><i class="bi bi-linkedin"></i> LinkedIn</a><br>
+            <a href="#"><i class="bi bi-facebook"></i> Facebook</a>
+            <a href="#"><i class="bi bi-twitter"></i> Twitter</a>
+            <a href="#"><i class="bi bi-linkedin"></i> LinkedIn</a>
             <a href="#"><i class="bi bi-instagram"></i> Instagram</a>
           </div>
         </div>
       </div>
-      <hr style="height: 2px; background: linear-gradient(to right, #ccc, #555, #ccc); border: none; opacity: 0.8; margin: 30px 0;">
-      <div class="text-center pb-3">
+      <hr>
+      <div class="copyright">
         <p>&copy; 2025 Dressly. All Rights Reserved.</p>
       </div>
     </div>
