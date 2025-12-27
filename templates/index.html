@@ -336,13 +336,17 @@
       <div class="carousel-inner">
         {% for ad in ads %}
         <div class="carousel-item{% if loop.first %} active{% endif %}">
-          <div style="background:rgba(255,255,255,0.97);border-radius:28px;padding:2.5rem 3rem;display:flex;align-items:center;gap:2.5rem;min-height:320px;">
+          <div style="background:linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,240,245,0.95) 100%);border-radius:28px;padding:2.5rem 3rem;display:flex;align-items:center;gap:2.5rem;min-height:320px;border:1px solid rgba(178,139,154,0.2);">
             <img src="{{ url_for('static', filename=ad.image_url) }}" alt="{{ ad.title }}"
-                 style="width:200px;height:260px;object-fit:cover;border-radius:16px;border:2.5px solid #B28B9A;">
+                 style="width:220px;height:280px;object-fit:cover;border-radius:18px;border:3px solid #B28B9A;box-shadow:0 8px 25px rgba(178,139,154,0.3);">
             <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
-              <div style="font-size:1.7rem;font-weight:700;color:#6D4250;margin-bottom:0.8rem;">{{ ad.title }}</div>
-              <div style="font-size:1.2rem;color:#B28B9A;margin-bottom:1.5rem;">{{ ad.content }}</div>
-              <a href="#products" class="btn btn-primary" style="background:#B28B9A;border:none;padding:0.8rem 2.5rem;font-size:1.1rem;border-radius:8px;font-weight:600;color:white;text-decoration:none;display:inline-block;width:fit-content;">Shop Now</a>
+              <div style="font-size:2rem;font-weight:800;color:#6D4250;margin-bottom:0.5rem;text-shadow:1px 1px 2px rgba(0,0,0,0.1);">{{ ad.title }}</div>
+              <div style="font-size:1.3rem;color:#B28B9A;margin-bottom:1rem;font-weight:600;">{{ ad.content }}</div>
+              <div style="background:linear-gradient(90deg,#FF6B6B,#FF8E8E);color:white;padding:0.6rem 1.2rem;border-radius:25px;font-weight:700;font-size:1rem;margin-bottom:1.2rem;width:fit-content;box-shadow:0 4px 15px rgba(255,107,107,0.4);">🔥 LIMITED TIME OFFER</div>
+              <div style="display:flex;gap:1rem;align-items:center;">
+                <a href="#products" class="btn btn-primary" style="background:linear-gradient(135deg,#B28B9A,#C99A9A);border:none;padding:1rem 2.8rem;font-size:1.2rem;border-radius:12px;font-weight:700;color:white;text-decoration:none;box-shadow:0 6px 20px rgba(178,139,154,0.4);transition:all 0.3s;">Shop Now</a>
+                <div style="color:#6D4250;font-size:0.95rem;font-weight:600;">⏰ Ends in 24 hours!</div>
+              </div>
             </div>
           </div>
         </div>

@@ -255,11 +255,11 @@ def reset_data():
     ]
     cursor.executemany('INSERT INTO products (name, price, image_url) VALUES (?, ?, ?)', sample_products)
     
-    # Add sample ads - featuring actual dresses
+    # Add sample ads - featuring selected dresses with unique promotions
     sample_ads = [
-        ('Summer Beige Collection', 'Elegant beige dresses for any occasion', 'beige.jpg'),
-        ('Evening Party Wear', 'Stunning blue dresses for special events', 'blueparty.jpg'),
-        ('Floral Collection', 'Beautiful floral patterns for spring', 'floral.jpg')
+        ('Pink Maxi Special', '25% OFF Weekend Sale - Limited Stock!', 'pinkmaxi.jpg'),
+        ('Formal Event Collection', 'Buy 2 Get 1 FREE on Formal Dresses', 'formalevent.jpg'),
+        ('Yellow Summer Sale', 'Flash Sale: 40% OFF All Yellow Dresses Today', 'yellowmaxi.jpg')
     ]
     cursor.executemany('INSERT INTO ads (title, content, image_url) VALUES (?, ?, ?)', sample_ads)
     
