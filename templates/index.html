@@ -340,28 +340,9 @@
             <img src="{{ url_for('static', filename=ad.image_url) }}" alt="{{ ad.title }}"
                  style="width:200px;height:260px;object-fit:cover;border-radius:16px;border:2.5px solid #B28B9A;">
             <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
-              <div style="font-size:1.7rem;font-weight:700;color:#6D4250;margin-bottom:0.4rem;">{{ ad.title }}</div>
-              <div style="font-size:1.18rem;color:#B28B9A;margin-bottom:0.7rem;">{{ ad.content }}</div>
-              {% if ad.start_date and ad.end_date %}
-              <div style="font-size:1.08rem;color:#C99A9A;margin-bottom:0.3rem;">Active: {{ ad.start_date }} to {{ ad.end_date }}</div>
-              {% endif %}
-              {% if ad.target_segment is not none %}
-              <div style="font-size:1.08rem;color:#B28B9A;">Target Segment: {{ ad.target_segment }}</div>
-              {% endif %}
-              <span style="display:inline-block;margin-top:1.1rem;padding:0.6rem 1.8rem;background:linear-gradient(90deg,#C99A9A,#B28B9A);color:#fff;border-radius:12px;font-weight:700;font-size:1.18rem;box-shadow:0 2px 12px rgba(201,154,154,0.10);">Sponsored</span>
-              <!-- Additional content for richer banner -->
-              <div style="margin-top:1.2rem;">
-                <ul style="padding-left:1.2rem;margin-bottom:0.7rem;">
-                  <li style="color:#6D4250;font-size:1.05rem;">Limited time offer: <b>Save up to 30%</b> on select styles!</li>
-                  <li style="color:#B28B9A;font-size:1.02rem;">Free shipping on orders over $100</li>
-                  <li style="color:#C99A9A;font-size:1.02rem;">Use code <b>SUMMER25</b> at checkout</li>
-                </ul>
-                <a href="/shop" class="btn btn-primary" style="background:#B28B9A;border:none;padding:0.7rem 2rem;font-size:1.1rem;border-radius:8px;font-weight:600;">Shop Now</a>
-              </div>
-              <div style="margin-top:0.9rem;display:flex;align-items:center;gap:1.2rem;">
-                <span style="font-size:0.98rem;color:#6D4250;">Hurry, offer ends soon!</span>
-                <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#E9D3D0"/><path d="M12 7v5l4 2" stroke="#B28B9A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </div>
+              <div style="font-size:1.7rem;font-weight:700;color:#6D4250;margin-bottom:0.8rem;">{{ ad.title }}</div>
+              <div style="font-size:1.2rem;color:#B28B9A;margin-bottom:1.5rem;">{{ ad.content }}</div>
+              <a href="#products" class="btn btn-primary" style="background:#B28B9A;border:none;padding:0.8rem 2.5rem;font-size:1.1rem;border-radius:8px;font-weight:600;color:white;text-decoration:none;display:inline-block;width:fit-content;">Shop Now</a>
             </div>
           </div>
         </div>
