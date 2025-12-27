@@ -290,8 +290,9 @@ def populate_sample_data():
         
         # Add sample ads
         sample_ads = [
-            ('New Collection', 'Latest styles available!', '/static/latest.jpg'),
-            ('Style Analytics', 'Find your perfect style', '/static/styleanalytics.jpg')
+            ('New Collection', 'Latest styles available!', 'latest.jpg'),
+            ('Style Analytics', 'Find your perfect style', 'styleanalytics.jpg'),
+            ('Analytics Dashboard', 'View your preferences', 'analytics2.jpg')
         ]
         cursor.executemany('INSERT OR IGNORE INTO ads (title, content, image_url) VALUES (?, ?, ?)', sample_ads)
         

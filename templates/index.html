@@ -337,11 +337,11 @@
         {% for ad in ads %}
         <div class="carousel-item{% if loop.first %} active{% endif %}">
           <div style="background:rgba(255,255,255,0.97);border-radius:28px;padding:2.5rem 3rem;display:flex;align-items:center;gap:2.5rem;min-height:320px;">
-            <img src="{{ ad.image }}" alt="{{ ad.title }}"
+            <img src="{{ url_for('static', filename=ad.image_url) }}" alt="{{ ad.title }}"
                  style="width:200px;height:260px;object-fit:cover;border-radius:16px;border:2.5px solid #B28B9A;">
             <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
               <div style="font-size:1.7rem;font-weight:700;color:#6D4250;margin-bottom:0.4rem;">{{ ad.title }}</div>
-              <div style="font-size:1.18rem;color:#B28B9A;margin-bottom:0.7rem;">{{ ad.description }}</div>
+              <div style="font-size:1.18rem;color:#B28B9A;margin-bottom:0.7rem;">{{ ad.content }}</div>
               {% if ad.start_date and ad.end_date %}
               <div style="font-size:1.08rem;color:#C99A9A;margin-bottom:0.3rem;">Active: {{ ad.start_date }} to {{ ad.end_date }}</div>
               {% endif %}
