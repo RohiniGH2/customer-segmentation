@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, session, request, flash, jsonify
+from flask import Flask, render_template, redirect, url_for, session, request, flash, jsonify, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 from datetime import datetime
@@ -9,6 +9,11 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'fallback_secret_key_for_development')
+
+# Add static file serving route for production
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('static', filename)
 
 def get_db_connection():
     conn = sqlite3.connect('users.db')
@@ -61,33 +66,33 @@ def index():
     if cursor.fetchone()[0] == 0:
         # Add ALL sample products from your static folder
         sample_products = [
-            ('Summer Beige Dress', 45.99, '/static/beige.jpg'),
-            ('Beige Midi Dress', 52.99, '/static/beigemidi.jpg'),
-            ('Black Evening Dress', 89.99, '/static/black.jpg'),
-            ('Blue Casual Dress', 42.99, '/static/blue.jpg'),
-            ('Blue Party Dress', 65.99, '/static/blueparty.jpg'),
-            ('Floral Summer Dress', 39.99, '/static/floral.jpg'),
-            ('Formal Black Dress', 95.99, '/static/formal.jpg'),
-            ('Formal Event Dress', 105.99, '/static/formalevent.jpg'),
-            ('Green Casual Dress', 48.99, '/static/green.jpg'),
-            ('Green Summer Dress', 44.99, '/static/greensummer.jpg'),
-            ('Latest Collection Dress', 67.99, '/static/latest.jpg'),
-            ('Pink Maxi Dress', 55.99, '/static/pinkmaxi.jpg'),
-            ('Pink Mini Dress', 35.99, '/static/pinkmini.jpg'),
-            ('Pink Work Dress', 58.99, '/static/pinkwork.jpg'),
-            ('Red Evening Dress', 78.99, '/static/red.jpg'),
-            ('White Casual Dress', 42.99, '/static/white.jpg'),
-            ('White Casual Day Dress', 41.99, '/static/whitecasual.jpg'),
-            ('Yellow Casual Dress', 46.99, '/static/yellow.jpg'),
-            ('Yellow Maxi Dress', 54.99, '/static/yellowmaxi.jpg')
+            ('Summer Beige Dress', 45.99, 'beige.jpg'),
+            ('Beige Midi Dress', 52.99, 'beigemidi.jpg'),
+            ('Black Evening Dress', 89.99, 'black.jpg'),
+            ('Blue Casual Dress', 42.99, 'blue.jpg'),
+            ('Blue Party Dress', 65.99, 'blueparty.jpg'),
+            ('Floral Summer Dress', 39.99, 'floral.jpg'),
+            ('Formal Black Dress', 95.99, 'formal.jpg'),
+            ('Formal Event Dress', 105.99, 'formalevent.jpg'),
+            ('Green Casual Dress', 48.99, 'green.jpg'),
+            ('Green Summer Dress', 44.99, 'greensummer.jpg'),
+            ('Latest Collection Dress', 67.99, 'latest.jpg'),
+            ('Pink Maxi Dress', 55.99, 'pinkmaxi.jpg'),
+            ('Pink Mini Dress', 35.99, 'pinkmini.jpg'),
+            ('Pink Work Dress', 58.99, 'pinkwork.jpg'),
+            ('Red Evening Dress', 78.99, 'red.jpg'),
+            ('White Casual Dress', 42.99, 'white.jpg'),
+            ('White Casual Day Dress', 41.99, 'whitecasual.jpg'),
+            ('Yellow Casual Dress', 46.99, 'yellow.jpg'),
+            ('Yellow Maxi Dress', 54.99, 'yellowmaxi.jpg')
         ]
         cursor.executemany('INSERT INTO products (name, price, image_url) VALUES (?, ?, ?)', sample_products)
         
         # Add sample ads
         sample_ads = [
-            ('New Collection', 'Latest styles available!', '/static/latest.jpg'),
-            ('Style Analytics', 'Find your perfect style', '/static/styleanalytics.jpg'),
-            ('Analytics Dashboard', 'View your preferences', '/static/analytics2.jpg')
+            ('New Collection', 'Latest styles available!', 'latest.jpg'),
+            ('Style Analytics', 'Find your perfect style', 'styleanalytics.jpg'),
+            ('Analytics Dashboard', 'View your preferences', 'analytics2.jpg')
         ]
         cursor.executemany('INSERT INTO ads (title, content, image_url) VALUES (?, ?, ?)', sample_ads)
         conn.commit()
@@ -228,33 +233,33 @@ def reset_data():
     
     # Add ALL products from your static folder
     sample_products = [
-        ('Summer Beige Dress', 45.99, '/static/beige.jpg'),
-        ('Beige Midi Dress', 52.99, '/static/beigemidi.jpg'),
-        ('Black Evening Dress', 89.99, '/static/black.jpg'),
-        ('Blue Casual Dress', 42.99, '/static/blue.jpg'),
-        ('Blue Party Dress', 65.99, '/static/blueparty.jpg'),
-        ('Floral Summer Dress', 39.99, '/static/floral.jpg'),
-        ('Formal Black Dress', 95.99, '/static/formal.jpg'),
-        ('Formal Event Dress', 105.99, '/static/formalevent.jpg'),
-        ('Green Casual Dress', 48.99, '/static/green.jpg'),
-        ('Green Summer Dress', 44.99, '/static/greensummer.jpg'),
-        ('Latest Collection Dress', 67.99, '/static/latest.jpg'),
-        ('Pink Maxi Dress', 55.99, '/static/pinkmaxi.jpg'),
-        ('Pink Mini Dress', 35.99, '/static/pinkmini.jpg'),
-        ('Pink Work Dress', 58.99, '/static/pinkwork.jpg'),
-        ('Red Evening Dress', 78.99, '/static/red.jpg'),
-        ('White Casual Dress', 42.99, '/static/white.jpg'),
-        ('White Casual Day Dress', 41.99, '/static/whitecasual.jpg'),
-        ('Yellow Casual Dress', 46.99, '/static/yellow.jpg'),
-        ('Yellow Maxi Dress', 54.99, '/static/yellowmaxi.jpg')
+        ('Summer Beige Dress', 45.99, 'beige.jpg'),
+        ('Beige Midi Dress', 52.99, 'beigemidi.jpg'),
+        ('Black Evening Dress', 89.99, 'black.jpg'),
+        ('Blue Casual Dress', 42.99, 'blue.jpg'),
+        ('Blue Party Dress', 65.99, 'blueparty.jpg'),
+        ('Floral Summer Dress', 39.99, 'floral.jpg'),
+        ('Formal Black Dress', 95.99, 'formal.jpg'),
+        ('Formal Event Dress', 105.99, 'formalevent.jpg'),
+        ('Green Casual Dress', 48.99, 'green.jpg'),
+        ('Green Summer Dress', 44.99, 'greensummer.jpg'),
+        ('Latest Collection Dress', 67.99, 'latest.jpg'),
+        ('Pink Maxi Dress', 55.99, 'pinkmaxi.jpg'),
+        ('Pink Mini Dress', 35.99, 'pinkmini.jpg'),
+        ('Pink Work Dress', 58.99, 'pinkwork.jpg'),
+        ('Red Evening Dress', 78.99, 'red.jpg'),
+        ('White Casual Dress', 42.99, 'white.jpg'),
+        ('White Casual Day Dress', 41.99, 'whitecasual.jpg'),
+        ('Yellow Casual Dress', 46.99, 'yellow.jpg'),
+        ('Yellow Maxi Dress', 54.99, 'yellowmaxi.jpg')
     ]
     cursor.executemany('INSERT INTO products (name, price, image_url) VALUES (?, ?, ?)', sample_products)
     
     # Add ads
     sample_ads = [
-        ('New Collection', 'Latest styles available!', '/static/latest.jpg'),
-        ('Style Analytics', 'Find your perfect style', '/static/styleanalytics.jpg'),
-        ('Analytics Dashboard', 'View your preferences', '/static/analytics2.jpg')
+        ('New Collection', 'Latest styles available!', 'latest.jpg'),
+        ('Style Analytics', 'Find your perfect style', 'styleanalytics.jpg'),
+        ('Analytics Dashboard', 'View your preferences', 'analytics2.jpg')
     ]
     cursor.executemany('INSERT INTO ads (title, content, image_url) VALUES (?, ?, ?)', sample_ads)
     

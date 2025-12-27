@@ -317,10 +317,10 @@
          data-price="{{ product.price|default('') }}"
          data-color="{{ product.color|default('') }}"
          data-size="{{ product.size|default('') }}">
-      <img src="{{ product.image if product.image else url_for('static', filename='default.jpg') }}" class="dress-img" alt="{{ product.title }}">
-      <div class="dress-title">{{ product.title }}</div>
-      <div class="dress-desc">{{ product.description }}</div>
-      <div class="dress-price">${{ product.price }}</div>
+      <img src="{{ url_for('static', filename=product.image_url) if product.image_url else url_for('static', filename='default.jpg') }}" class="dress-img" alt="{{ product.name }}">
+      <div class="dress-title">{{ product.name }}</div>
+      <div class="dress-desc">{{ product.description|default('Elegant dress for any occasion') }}</div>
+      <div class="dress-price">${{ "%.2f"|format(product.price) }}</div>
       <button class="btn-add">Add to Cart</button>
     </div>
     {% endfor %}
