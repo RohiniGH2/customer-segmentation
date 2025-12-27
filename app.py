@@ -56,24 +56,38 @@ def index():
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    # Check if we have products, if not, populate some
+    # Check if we have products, if not, populate ALL products
     cursor.execute("SELECT COUNT(*) FROM products")
     if cursor.fetchone()[0] == 0:
-        # Add sample products
+        # Add ALL sample products from your static folder
         sample_products = [
             ('Summer Beige Dress', 45.99, '/static/beige.jpg'),
+            ('Beige Midi Dress', 52.99, '/static/beigemidi.jpg'),
             ('Black Evening Dress', 89.99, '/static/black.jpg'),
+            ('Blue Casual Dress', 42.99, '/static/blue.jpg'),
             ('Blue Party Dress', 65.99, '/static/blueparty.jpg'),
             ('Floral Summer Dress', 39.99, '/static/floral.jpg'),
+            ('Formal Black Dress', 95.99, '/static/formal.jpg'),
+            ('Formal Event Dress', 105.99, '/static/formalevent.jpg'),
+            ('Green Casual Dress', 48.99, '/static/green.jpg'),
+            ('Green Summer Dress', 44.99, '/static/greensummer.jpg'),
+            ('Latest Collection Dress', 67.99, '/static/latest.jpg'),
             ('Pink Maxi Dress', 55.99, '/static/pinkmaxi.jpg'),
-            ('White Casual Dress', 42.99, '/static/whitecasual.jpg')
+            ('Pink Mini Dress', 35.99, '/static/pinkmini.jpg'),
+            ('Pink Work Dress', 58.99, '/static/pinkwork.jpg'),
+            ('Red Evening Dress', 78.99, '/static/red.jpg'),
+            ('White Casual Dress', 42.99, '/static/white.jpg'),
+            ('White Casual Day Dress', 41.99, '/static/whitecasual.jpg'),
+            ('Yellow Casual Dress', 46.99, '/static/yellow.jpg'),
+            ('Yellow Maxi Dress', 54.99, '/static/yellowmaxi.jpg')
         ]
         cursor.executemany('INSERT INTO products (name, price, image_url) VALUES (?, ?, ?)', sample_products)
         
         # Add sample ads
         sample_ads = [
             ('New Collection', 'Latest styles available!', '/static/latest.jpg'),
-            ('Style Analytics', 'Find your perfect style', '/static/styleanalytics.jpg')
+            ('Style Analytics', 'Find your perfect style', '/static/styleanalytics.jpg'),
+            ('Analytics Dashboard', 'View your preferences', '/static/analytics2.jpg')
         ]
         cursor.executemany('INSERT INTO ads (title, content, image_url) VALUES (?, ?, ?)', sample_ads)
         conn.commit()
@@ -82,8 +96,8 @@ def index():
     cursor.execute("SELECT * FROM ads WHERE is_active = 1")
     ads = cursor.fetchall()
     
-    # Fetch products
-    cursor.execute("SELECT * FROM products LIMIT 12")
+    # Fetch ALL products (not just 12)
+    cursor.execute("SELECT * FROM products")
     products = cursor.fetchall()
     
     cursor.close()
@@ -201,6 +215,54 @@ def test_images():
         return f"Static folder exists. Image files found: {image_files}"
     else:
         return "Static folder not found"
+
+@app.route('/reset-data')
+def reset_data():
+    """Reset and populate with ALL products"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Clear existing products
+    cursor.execute("DELETE FROM products")
+    cursor.execute("DELETE FROM ads")
+    
+    # Add ALL products from your static folder
+    sample_products = [
+        ('Summer Beige Dress', 45.99, '/static/beige.jpg'),
+        ('Beige Midi Dress', 52.99, '/static/beigemidi.jpg'),
+        ('Black Evening Dress', 89.99, '/static/black.jpg'),
+        ('Blue Casual Dress', 42.99, '/static/blue.jpg'),
+        ('Blue Party Dress', 65.99, '/static/blueparty.jpg'),
+        ('Floral Summer Dress', 39.99, '/static/floral.jpg'),
+        ('Formal Black Dress', 95.99, '/static/formal.jpg'),
+        ('Formal Event Dress', 105.99, '/static/formalevent.jpg'),
+        ('Green Casual Dress', 48.99, '/static/green.jpg'),
+        ('Green Summer Dress', 44.99, '/static/greensummer.jpg'),
+        ('Latest Collection Dress', 67.99, '/static/latest.jpg'),
+        ('Pink Maxi Dress', 55.99, '/static/pinkmaxi.jpg'),
+        ('Pink Mini Dress', 35.99, '/static/pinkmini.jpg'),
+        ('Pink Work Dress', 58.99, '/static/pinkwork.jpg'),
+        ('Red Evening Dress', 78.99, '/static/red.jpg'),
+        ('White Casual Dress', 42.99, '/static/white.jpg'),
+        ('White Casual Day Dress', 41.99, '/static/whitecasual.jpg'),
+        ('Yellow Casual Dress', 46.99, '/static/yellow.jpg'),
+        ('Yellow Maxi Dress', 54.99, '/static/yellowmaxi.jpg')
+    ]
+    cursor.executemany('INSERT INTO products (name, price, image_url) VALUES (?, ?, ?)', sample_products)
+    
+    # Add ads
+    sample_ads = [
+        ('New Collection', 'Latest styles available!', '/static/latest.jpg'),
+        ('Style Analytics', 'Find your perfect style', '/static/styleanalytics.jpg'),
+        ('Analytics Dashboard', 'View your preferences', '/static/analytics2.jpg')
+    ]
+    cursor.executemany('INSERT INTO ads (title, content, image_url) VALUES (?, ?, ?)', sample_ads)
+    
+    conn.commit()
+    cursor.close()
+    conn.close()
+    
+    return f"Database reset! Added {len(sample_products)} products and {len(sample_ads)} ads. <a href='/'>Go to Homepage</a>"
 
 @app.route('/populate')
 def populate_sample_data():
