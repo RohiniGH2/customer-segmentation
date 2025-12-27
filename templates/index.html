@@ -326,45 +326,6 @@
     {% endfor %}
   </div>
 
-  <!-- Ads Section: Floating/Transitioning Banners at Bottom -->
-  {% if ads and ads|length > 0 %}
-  <!-- Inline Ad Banner Carousel (Bootstrap) -->
-  <div id="adsBannerSection" style="width:100%;display:flex;justify-content:center;margin:3.5rem 0 2.5rem 0;">
-    <div id="adsBannerCarousel" class="carousel slide"
-         data-bs-ride="carousel"
-         style="width:1300px;max-width:99vw;min-width:340px;box-shadow:0 6px 32px rgba(201,154,154,0.18);border-radius:28px;">
-      <div class="carousel-inner">
-        {% for ad in ads %}
-        <div class="carousel-item{% if loop.first %} active{% endif %}">
-          <div style="background:linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,240,245,0.95) 100%);border-radius:28px;padding:2.5rem 3rem;display:flex;align-items:center;gap:2.5rem;min-height:320px;border:1px solid rgba(178,139,154,0.2);">
-            <img src="{{ url_for('static', filename=ad.image_url) }}" alt="{{ ad.title }}"
-                 style="width:220px;height:280px;object-fit:cover;border-radius:18px;border:3px solid #B28B9A;box-shadow:0 8px 25px rgba(178,139,154,0.3);">
-            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
-              <div style="font-size:2rem;font-weight:800;color:#6D4250;margin-bottom:0.5rem;text-shadow:1px 1px 2px rgba(0,0,0,0.1);">{{ ad.title }}</div>
-              <div style="font-size:1.3rem;color:#B28B9A;margin-bottom:1rem;font-weight:600;">{{ ad.content }}</div>
-              <div style="background:linear-gradient(90deg,#FF6B6B,#FF8E8E);color:white;padding:0.6rem 1.2rem;border-radius:25px;font-weight:700;font-size:1rem;margin-bottom:1.2rem;width:fit-content;box-shadow:0 4px 15px rgba(255,107,107,0.4);">🔥 LIMITED TIME OFFER</div>
-              <div style="display:flex;gap:1rem;align-items:center;">
-                <a href="#products" class="btn btn-primary" style="background:linear-gradient(135deg,#B28B9A,#C99A9A);border:none;padding:1rem 2.8rem;font-size:1.2rem;border-radius:12px;font-weight:700;color:white;text-decoration:none;box-shadow:0 6px 20px rgba(178,139,154,0.4);transition:all 0.3s;">Shop Now</a>
-                <div style="color:#6D4250;font-size:0.95rem;font-weight:600;">⏰ Ends in 24 hours!</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#adsBannerCarousel" data-bs-slide="prev" style="filter:none;">
-        <span class="carousel-control-prev-icon" aria-hidden="true" style="background-color:#B28B9A;border-radius:50%;"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#adsBannerCarousel" data-bs-slide="next" style="filter:none;">
-        <span class="carousel-control-next-icon" aria-hidden="true" style="background-color:#B28B9A;border-radius:50%;"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
-    </div>
-  </div>
-  {% endif %}
-</div>
-
 <!-- Login/Register Prompt Modal -->
 <div class="modal fade" id="loginPromptModal" tabindex="-1" aria-labelledby="loginPromptLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
